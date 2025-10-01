@@ -10,42 +10,55 @@ ica-homeworks/
 │   ├── __init__.py
 │   ├── data_loader.py        # Data loading utilities
 │   └── README.md
-├── homework1/                 # Homework 1: Data Preprocessing
-│   ├── preprocessing.ipynb   # Jupyter notebook for preprocessing
+├── homework1/                 # Homework 1: Data Analysis
+│   ├── preprocessing.ipynb   # Jupyter notebook for data analysis
 │   └── README.md
-├── homework2/                 # Homework 2: Data Processing
-│   ├── processing.ipynb      # Jupyter notebook for model training
+├── homework2/                 # Homework 2: Methods for Regression
+│   ├── processing.ipynb      # Jupyter notebook for regression methods
 │   └── README.md
-├── homework3/                 # Homework 3: Data Analysis
-│   ├── analysis.ipynb        # Jupyter notebook for analysis
+├── homework3/                 # Homework 3: Methods for Classification
+│   ├── analysis.ipynb        # Jupyter notebook for classification methods
 │   └── README.md
 ├── requirements.txt          # Python dependencies
 ├── LICENSE
 └── README.md
 ```
 
+## Dataset
+
+This project uses the **Air Quality Index** dataset, which contains 9358 instances of hourly averaged responses from an array of 5 metal oxide chemical sensors embedded in an Air Quality Chemical Multisensor Device. Source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Air+Quality).
+
 ## Homeworks Overview
 
-### Homework 1: Data Preprocessing
-Focus on data cleaning, feature engineering, and preparing data for machine learning models.
-- Data loading and exploration
-- Handling missing values and duplicates
-- Feature scaling and normalization
-- Encoding categorical variables
+All homeworks follow the IEEE (Institute of Electrical and Electronics Engineers) Manuscript Templates for Conference Proceedings format. Papers must not exceed 6 pages and include the following sections:
+- **Abstract**: Main objective and overview of the work
+- **Introduction**: Context, background, and literature review
+- **Methods**: Explanation of methods/algorithms used
+- **Results**: Discussion of results
 
-### Homework 2: Data Processing
-Focus on machine learning model training and evaluation.
+### Homework 1: Data Analysis
+Focus on exploratory data analysis and understanding the Air Quality dataset.
+- Data loading and exploration
+- Statistical analysis and visualization
+- Data quality assessment
+- Feature understanding and correlation analysis
+- Initial insights and patterns
+
+### Homework 2: Methods for Regression
+Focus on applying regression methods to predict continuous variables in the Air Quality dataset.
 - Feature engineering and selection
-- Model training with multiple algorithms
-- Cross-validation and hyperparameter tuning
+- Regression model implementation (Linear Regression, Ridge, Lasso, Random Forest, etc.)
+- Model training and hyperparameter tuning
+- Cross-validation techniques
 - Model evaluation and comparison
 
-### Homework 3: Data Analysis
-Focus on comprehensive analysis and interpretation of results.
-- Exploratory Data Analysis (EDA)
-- Statistical analysis and hypothesis testing
-- Model performance analysis
-- Feature importance and visualization
+### Homework 3: Methods for Classification
+Focus on applying classification methods to categorize air quality levels.
+- Feature preprocessing for classification
+- Classification model implementation (Logistic Regression, SVM, Decision Trees, Random Forest, etc.)
+- Model training and optimization
+- Performance metrics (accuracy, precision, recall, F1-score)
+- Model comparison and selection
 
 ## Getting Started
 
@@ -80,11 +93,11 @@ jupyter notebook
 ## Usage
 
 Navigate to each homework directory and open the respective Jupyter notebook:
-- `homework1/preprocessing.ipynb` - Start with data preprocessing
-- `homework2/processing.ipynb` - Continue with model training
-- `homework3/analysis.ipynb` - Finish with data analysis
+- `homework1/preprocessing.ipynb` - Start with data analysis
+- `homework2/processing.ipynb` - Continue with regression methods
+- `homework3/analysis.ipynb` - Finish with classification methods
 
-Each notebook is self-contained and includes detailed comments and explanations.
+Each notebook is self-contained and includes detailed comments and explanations following the IEEE paper format structure.
 
 ## Database Module
 
@@ -96,12 +109,21 @@ from database.data_loader import DataLoader
 # Initialize the loader
 loader = DataLoader(data_path='./data')
 
-# Load data
-df = loader.load_csv('dataset.csv')
+# Load Air Quality data
+df = loader.load_csv('AirQualityUCI.csv')
 
 # Save processed data
 loader.save_csv(df, 'output.csv')
 ```
+
+## Paper Format Guidelines
+
+Each homework should follow the IEEE conference paper format:
+- Maximum 6 pages
+- Include: Abstract, Introduction, Methods, Results sections
+- Provide references and citations
+- Work can be done individually or with max 4 co-authors
+- Must include a clear statement of each contributor's work
 
 ## Contributing
 
