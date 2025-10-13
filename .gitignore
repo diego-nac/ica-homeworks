@@ -212,3 +212,54 @@ homework*/outputs/**/*.jpg
 homework*/outputs/**/*.pdf
 homework*/outputs/**/*.csv
 homework*/database/
+
+# =======================================
+# LaTeX build artifacts
+# =======================================
+# Arquivos auxiliares temporários
+homework*/doc/*.aux
+homework*/doc/*.bbl
+homework*/doc/*.blg
+homework*/doc/*.fdb_latexmk
+homework*/doc/*.fls
+homework*/doc/*.log
+homework*/doc/*.out
+homework*/doc/*.synctex.gz
+
+# PDF final (gerado)
+homework*/doc/*.pdf
+
+# =======================================
+# Latex intermediates dentro de subpastas (segurança extra)
+# =======================================
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lot
+*.lof
+
+
+
+# =======================================
+# Editor temporaries
+# =======================================
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+
+
+# =======================================
+# Compiladores e cache
+# =======================================
+__latexmk__
+.cache/
