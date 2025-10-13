@@ -212,3 +212,11 @@ homework*/outputs/**/*.jpg
 homework*/outputs/**/*.pdf
 homework*/outputs/**/*.csv
 homework*/database/
+
+homework*/doc/*.aux
+homework*/doc/*.fdb_latexmk
+homework*/doc/*.fls
+homework*/doc/*.log
+homework*/doc/*.synctex.gz
+homework*/doc/*.pdf
+
