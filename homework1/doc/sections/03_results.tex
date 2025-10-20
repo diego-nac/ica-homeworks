@@ -1,2 +1,77 @@
-\section{Results}
-Reporte resultados de pré-processamento (percentual de faltantes, variáveis transformadas), estatísticas-resumo, correlações, PCA (variância explicada, loadings mais relevantes) e qualquer resultado adicional solicitado nas \textit{guidelines}.
+\section{Resultados}
+
+\begin{table}[ht]
+  \centering
+  \caption{Resumo das vairáveis da base de dados}
+  \label{tab:variaveis}
+  \begin{tabular}{cc}
+    \hline
+    Variável & Descrição \\
+    \hline
+    PT08.S1(CO)   & RMSP do CO \\
+    PT08.S2(NMHC) &	RMSP do NMHC \\
+    PT08.S3(NOx)  & RMSP do NOx \\
+    PT08.S4(NO2)  & RMSP do NO2 \\
+    PT08.S5(O3)   & RMSP do O3 \\
+    T             & Temperatura \\
+    RH            & Humidade Relativa \\
+    AH            & Humidade Absoluta \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Primeiramente, na tabela (\textcolor{blue}{Tab. \ref{tab:variaveis}}) nós resuminos os dados para melhor 
+entendimento das análises. Note que RMSP é uma abreviação para ``resposta média do 
+sensor por hora".
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.6]{../../figures/biplot_pca_circulo_contribuicao.png}
+  \caption{Círculo de contribuição de cada preditor}
+  \label{fig:circulo}
+\end{figure}
+
+Vamos começar pela análise do PCA. Podemos ver pela figura (\textcolor{blue}{Fig. \ref{fig:circulo}}) que poderiamos
+dividir os dados em cerca de 3 classes. Cada classe ficaria com práticamente 1 quadrante do
+circulo. Se analizarmos como os preditores estão espalhados no circulos podemos propor as 
+seguntes classes.
+
+\begin{itemize}[]
+  \item [] 1ª: PT08.S3(NOx)
+  \item [] 2ª: T, AH e PT08.S4(NOx)
+  \item [] 3ª: RH, PT08.S1(CO), PT08.S2(NMHC) e PT08.S5(03)
+\end{itemize}
+
+Outro ponto interessante de se notar é que como apenas duas compenente principais no temos
+a representação de $77,5\%$ da variancia dos dados. Isso fica claro quando olhamos para o
+gráficos de scren plot (\textcolor{blue}{Fig. \ref{fig:scree-plot-duas-barras-percent}}).
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.35]{../../figures/scree_plot_duas_barras_percent.png}
+  \caption{Gráfico de barras mostrando como os preditores explicão os dados}
+  \label{fig:scree-plot-duas-barras-percent}
+\end{figure}
+
+Mais um resultado importante é o mostrado na matriz de preditores (\textcolor{blue}{Fig. \ref{fig:correlation-matrix}}). Podemos
+notar quais variáveis são diretamente corelacionadas, quais não possui corelação e quais são
+inversamente correlacionadas. Isso vai nos auxiliar a entender as componente principais que aparecem no
+PCA (\textcolor{blue}{Fig. \ref{fig:correlation-matrix}}).
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.5]{../../figures/predictors_correlation_matrix.png}
+  \caption{Matriz de preditores mostrando a correlação 2 a 2 dos dados}
+  \label{fig:correlation-matrix}
+\end{figure}
+
+Quando cruzamos os dados do datasete após os dados passarem pela análise PCA, ou seja, quando cruzamos os dados dos 
+componentes principais percebemos que os dados não serão corelacionados (\textcolor{blue}{Fig. \ref{fig:pairplot-pca}}). Isso é justamente o que busta o PCA. Encontrar
+um conjunto de componentes principais que explicão boa parter (em geral mais que $80\%$) da variância dos dados no dataset.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.4]{../../figures/pairplot_pca_dayperiod.png}
+  \caption{Pairplot PCA}
+  \label{fig:pairplot-pca}
+\end{figure}

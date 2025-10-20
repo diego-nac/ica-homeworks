@@ -6,7 +6,7 @@ A análise do dataset Air Quality UCI seguiu um pipeline metodológico implement
 \subsection{Descrição e Preparação do Conjunto de Dados}
 \label{subsec:dataset_prep}
 
-Utilizou-se o dataset "Air Quality UCI" \cite{devito2008}, contendo \textbf{N = 9358} observações horárias e \textbf{D = 15} variáveis (5 sensores MOx, 5 medições de referência GT, 3 variáveis climáticas, Data e Hora), coletadas entre 2004 e 2005.
+Utilizou-se o dataset ``Air Quality UCI" \cite{devito2008}, contendo \textbf{N = 9358} observações horárias e \textbf{D = 15} variáveis (5 sensores MOx, 5 medições de referência GT, 3 variáveis climáticas, Data e Hora), coletadas entre 2004 e 2005.
 
 O pré-processamento iniciou-se com a leitura dos dados, especificando os separadores corretos e tratando o valor \texttt{-200} como ausente (\texttt{NaN}). As colunas \texttt{Date} e \texttt{Time} foram combinadas num índice \texttt{datetime}, estruturando os dados como uma série temporal. A variável \texttt{NMHC(GT)}, com mais de 90\% de dados ausentes, foi considerada não confiável e excluída das análises subsequentes. Para a análise multivariada e PCA, linhas com valores ausentes nos quatro poluentes de referência restantes (\texttt{CO(GT)}, \texttt{NOx(GT)}, \texttt{NO2(GT)}, \texttt{C6H6(GT)}) foram removidas, resultando num conjunto de dados final de \textbf{N = 6941} observações. Linhas duplicadas foram também removidas. O conjunto de dados foi então dividido em \textbf{8 Preditores} (sensores e clima) e \textbf{4 Alvos} (poluentes GT).
 
@@ -39,3 +39,31 @@ Conforme requerido, o PCA foi implementado manualmente para reduzir a dimensiona
     \item \textbf{Seleção e Projeção:} Os autovalores/autovetores foram ordenados. A variância explicada por cada componente foi calculada e visualizada num Scree Plot. Os dados padronizados foram então projetados nos dois primeiros componentes principais (PC1 e PC2) através de multiplicação de matrizes.
     \item \textbf{Visualização:} O resultado 2D foi visualizado num gráfico de dispersão (PC1 vs PC2), colorido pelas classes. Um Biplot e um Círculo de Correlação foram gerados para interpretar a contribuição das variáveis originais aos componentes.
 \end{enumerate}
+
+\subsection{Explicando a PCA}
+
+Na ACP - análise de componente principais (PCA - Principal Component Analisy) nós estamos procurando reduzir o
+número de preditores do nosso conjunto de dados. Imagine que você possui um conjunto de dados como milhares de
+preditores ou indicares. Realizar uma análise de dados em cima desses dados seria algo muito custoso computacionalmente
+então para melhorar o processamento desses dados nós podemos usar alguma técnia de compressão de dados, umas das mais 
+populares é justament o PCA.
+
+Intuitivamente podemos imaginar a PCA como uma rotação da reta de regração dos nossos dados (\textcolor{blue}{Fig. \ref{fig:pca-example}}). Em utras palavras, dado
+um conjunto de dados como uma dada dimenção D (D preditores, indicadores ou caracteristica) podemos traçar a reta de regração
+que melhore representa esse dados. Esssa reta será nossa CP1 - componente principal 1 (PC1 - principal component 1). As próximas
+componente principais serão conseguidas trassando retas ortogonais a PC1 passando todos pelo mesmo ponto.
+
+Nesse processo soma da variância total dos dados não é alterada. O que é alterado é a importância de cada variável para explicar Os
+dados. Ao final da PCA o primeiro componente principal será responável por explicar a maior parte da variação dos dados, a segunda
+componente principa PC2 será responsável pola segunda maior parte e assim por diante, como mostrado na \textcolor{blue}{Fig. \ref{fig:scree-plot-duas-barras-percent}}.
+
+Como dito inicialmente, nosso objetivo é reduzir a dimenção dos dados. Isso acontesse porque podemos usar um conjunto de PCs (e.g. PC1,
+PC2 e PC3) tudo vai depender de quandos porcento da variância dos dados nós estamos querendo representar. É necessário realizar 
+o palanço entre desemplenho e confiabilidade na representação dos dados.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.45]{../figures/pca-example.png}
+    \caption{Como a PCA calcula as PCs}
+    \label{fig:pca-example}
+\end{figure}
