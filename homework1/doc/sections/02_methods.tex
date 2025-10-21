@@ -1,69 +1,118 @@
+% ===== BLOCO 1 — METODOLOGIA (com todos os gráficos) =====
 \section{Metodologia}
 \label{sec:metodologia}
 
-A análise do dataset Air Quality UCI seguiu um pipeline metodológico implementado em Python com as bibliotecas Pandas, NumPy, Matplotlib e Seaborn. As etapas principais incluíram a descrição e pré-processamento dos dados, análise exploratória univariada e condicional com engenharia de atributos, análise multivariada de correlações e, finalmente, a implementação manual da Análise de Componentes Principais (PCA) para redução de dimensionalidade.
+\subsection{Fonte de dados}
+O conjunto de dados utilizado é o \textit{Air Quality UCI}~\cite{Vito2008}, disponibilizado pelo UCI Machine Learning Repository. O conjunto compreende aproximadamente 9\,358 observações horárias capturadas entre março de 2004 e fevereiro de 2005 por um dispositivo multisensor instalado ao nível do solo em uma área urbana italiana. As variáveis incluem leituras de cinco sensores MOx (PT08.S1--PT08.S5), medições de referência para poluentes (por exemplo, CO, NOx, NO2, C6H6) e variáveis meteorológicas (temperatura -- T, umidade relativa -- RH, umidade absoluta -- AH). Valores ausentes originais no dataset foram marcados com \texttt{-200} e tratados conforme descrito na Seção~\ref{sec:preproc}.
 
-\subsection{Descrição e Preparação do Conjunto de Dados}
-\label{subsec:dataset_prep}
-
-Utilizou-se o dataset ``Air Quality UCI" \cite{devito2008}, contendo \textbf{N = 9358} observações horárias e \textbf{D = 15} variáveis (5 sensores MOx, 5 medições de referência GT, 3 variáveis climáticas, Data e Hora), coletadas entre 2004 e 2005.
-
-O pré-processamento iniciou-se com a leitura dos dados, especificando os separadores corretos e tratando o valor \texttt{-200} como ausente (\texttt{NaN}). As colunas \texttt{Date} e \texttt{Time} foram combinadas num índice \texttt{datetime}, estruturando os dados como uma série temporal. A variável \texttt{NMHC(GT)}, com mais de 90\% de dados ausentes, foi considerada não confiável e excluída das análises subsequentes. Para a análise multivariada e PCA, linhas com valores ausentes nos quatro poluentes de referência restantes (\texttt{CO(GT)}, \texttt{NOx(GT)}, \texttt{NO2(GT)}, \texttt{C6H6(GT)}) foram removidas, resultando num conjunto de dados final de \textbf{N = 6941} observações. Linhas duplicadas foram também removidas. O conjunto de dados foi então dividido em \textbf{8 Preditores} (sensores e clima) e \textbf{4 Alvos} (poluentes GT).
-
-\subsection{Análise Exploratória (EDA) e Engenharia de Atributos}
-\label{subsec:eda_feature_eng}
-
-A EDA visou caracterizar as distribuições das variáveis e identificar padrões. Foram calculadas estatísticas descritivas (média, desvio padrão, assimetria, quartis) e geradas visualizações (Histogramas, Box Plots, Violin Plots, Séries Temporais) para cada variável numérica.
-
-Para habilitar a análise condicional e temporal, foram criadas novas variáveis:
-\begin{itemize}
-    \item \textbf{Características Temporais:} Extração de \texttt{month}, \texttt{weekday} e \texttt{day\_period} a partir do índice \texttt{datetime}.
-    \item \textbf{Índice de Poluição Composto (CPI):} Os quatro poluentes GT selecionados foram padronizados via Z-score para normalizar suas escalas. O CPI (\texttt{pollution\_index}) foi calculado como a média destes Z-scores por observação.
-    \item \textbf{Classes de Poluição (L=3):} O CPI foi discretizado em três classes de igual frequência (\texttt{Low}, \texttt{Moderate}, \texttt{High}), resultando numa \textbf{distribuição de classes} balanceada (\textbf{L=3}).
-\end{itemize}
-Subsequentemente, a análise univariada foi repetida de forma condicional, agrupando os dados pela \texttt{pollution\_class} e pelas características temporais para investigar variações nos padrões.
-
-\subsection{Análise Multivariada e Correlação}
-\label{subsec:multivariate_corr}
-
-Para investigar as relações entre os 8 preditores, foi realizada uma análise multivariada. A correlação linear de Pearson entre todos os pares de preditores foi calculada e visualizada como um \textit{heatmap}, destacando a forte multicolinearidade entre os sensores. Gráficos de pares, coloridos pelas classes de poluição e temporais, foram gerados para inspecionar visualmente a separabilidade das classes e as relações bivariadas.
-
-\subsection{Análise de Componentes Principais (PCA) - Implementação Manual}
-\label{subsec:pca_manual}
-
-Conforme requerido, o PCA foi implementado manualmente para reduzir a dimensionalidade dos 8 preditores e identificar as principais fontes de variação. Os passos foram:
+\subsection{Pré-processamento}
+\label{sec:preproc}
+As etapas de pré-processamento foram:
 \begin{enumerate}
-    \item \textbf{Padronização:} Os 8 preditores foram padronizados (média 0, desvio padrão 1) usando Z-score.
-    \item \textbf{Matriz de Covariância:} Calculada a partir dos dados padronizados.
-    \item \textbf{Decomposição Espectral:} Cálculo dos autovalores e autovetores da matriz de covariância.
-    \item \textbf{Seleção e Projeção:} Os autovalores/autovetores foram ordenados. A variância explicada por cada componente foi calculada e visualizada num Scree Plot. Os dados padronizados foram então projetados nos dois primeiros componentes principais (PC1 e PC2) através de multiplicação de matrizes.
-    \item \textbf{Visualização:} O resultado 2D foi visualizado num gráfico de dispersão (PC1 vs PC2), colorido pelas classes. Um Biplot e um Círculo de Correlação foram gerados para interpretar a contribuição das variáveis originais aos componentes.
+    \item \textbf{Leitura e conversão de datas:} as colunas \texttt{Date} e \texttt{Time} foram combinadas em um único índice \texttt{datetime} e convertidas para tipo \texttt{datetime}.
+    \item \textbf{Substituição de marca de ausentes:} os valores iguais a \texttt{-200} foram substituídos por \texttt{NaN}.
+    \item \textbf{Remoção de colunas e observações:} conforme regra explícita do trabalho, variáveis com perda de informação superior a \(90\%\) foram descartadas (por exemplo, \texttt{NMHC(GT)}) e observações duplicadas foram removidas.
+    \item \textbf{Tratamento de ausentes:} para análises descritivas e PCA adotou-se \emph{listwise deletion} apenas nas etapas em que a matriz não podia conter \texttt{NaN} (por exemplo, cálculo de covariância para PCA). Para visualizações e algumas estatísticas foram mantidas observações com \texttt{NaN} para evidenciar a extensão do problema.
+    \item \textbf{Padronização:} variáveis numéricas de preditores foram padronizadas (z-score) antes da aplicação da PCA e de alguns testes paramétricos.
 \end{enumerate}
 
-\subsection{Explicando a PCA}
+\subsection{Sumário do dataset e valores ausentes}
+Para facilitar a leitura, a Tabela~\ref{tab:missing} lista as variáveis selecionadas e a percentagem de valores ausentes observada no processamento:
 
-Na ACP - análise de componente principais (PCA - Principal Component Analisy) nós estamos procurando reduzir o
-número de preditores do nosso conjunto de dados. Imagine que você possui um conjunto de dados como milhares de
-preditores ou indicares. Realizar uma análise de dados em cima desses dados seria algo muito custoso computacionalmente
-então para melhorar o processamento desses dados nós podemos usar alguma técnia de compressão de dados, umas das mais 
-populares é justament o PCA.
-
-Intuitivamente podemos imaginar a PCA como uma rotação da reta de regração dos nossos dados (\textcolor{blue}{Fig. \ref{fig:pca-example}}). Em utras palavras, dado
-um conjunto de dados como uma dada dimenção D (D preditores, indicadores ou caracteristica) podemos traçar a reta de regração
-que melhore representa esse dados. Esssa reta será nossa CP1 - componente principal 1 (PC1 - principal component 1). As próximas
-componente principais serão conseguidas trassando retas ortogonais a PC1 passando todos pelo mesmo ponto.
-
-Nesse processo soma da variância total dos dados não é alterada. O que é alterado é a importância de cada variável para explicar Os
-dados. Ao final da PCA o primeiro componente principal será responável por explicar a maior parte da variação dos dados, a segunda
-componente principa PC2 será responsável pola segunda maior parte e assim por diante, como mostrado na \textcolor{blue}{Fig. \ref{fig:scree-plot-duas-barras-percent}}.
-
-Como dito inicialmente, nosso objetivo é reduzir a dimenção dos dados. Isso acontesse porque podemos usar um conjunto de PCs (e.g. PC1,
-PC2 e PC3) tudo vai depender de quandos porcento da variância dos dados nós estamos querendo representar. É necessário realizar 
-o palanço entre desemplenho e confiabilidade na representação dos dados.
-
-\begin{figure}[ht]
+\begin{table}[htbp]
     \centering
-    \includegraphics[scale=0.45]{../figures/pca-example.png}
-    \caption{Como a PCA calcula as PCs}
-    \label{fig:pca-example}
+    \caption{Contagem de valores ausentes (em \%) — principais variáveis.}
+    \label{tab:missing}
+    \begin{tabular}{lrr}
+        \hline
+        \textbf{Variável} & \textbf{Ausentes (n)} & \textbf{Ausentes (\%)} \\
+        \hline
+        NMHC(GT)         & 8\,557 & \(90.35\%\) \\
+        CO(GT)           & 1\,797 & \(18.97\%\) \\
+        NO2(GT)          & 1\,756 & \(18.54\%\) \\
+        NOx(GT)          & 1\,753 & \(18.51\%\) \\
+        PT08.S1(CO)      & 480    & \(5.07\%\) \\
+        PT08.S2(NMHC)    & 480    & \(5.07\%\) \\
+        C6H6(GT)         & 480    & \(5.07\%\) \\
+        PT08.S3(NOx)     & 480    & \(5.07\%\) \\
+        PT08.S4(NO2)     & 480    & \(5.07\%\) \\
+        PT08.S5(O3)      & 480    & \(5.07\%\) \\
+        T (Temperatura)  & 480    & \(5.07\%\) \\
+        RH (Umid. rel.)  & 480    & \(5.07\%\) \\
+        AH (Umid. abs.)  & 480    & \(5.07\%\) \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\noindent\textbf{Interpretação:} a alta fração de ausentes em \texttt{NMHC(GT)} motivou sua exclusão de análises agregadas e do índice composto de poluição; as demais variáveis apresentaram perda moderada e foram mantidas, com atenção à técnica de análise (procedimentos que exigem matriz completa usaram exclusão de linhas).
+
+\subsection{Engenharia de atributos e definição de classes}
+\label{sec:features}
+\begin{itemize}
+    \item \textbf{Índice de Poluição Composto (CPI):} poluentes de referência (\texttt{CO(GT)}, \texttt{NOx(GT)}, \texttt{NO2(GT)}, \texttt{C6H6(GT)}) foram padronizados (z-score) e agregados pela média das z-scores.
+    \item \textbf{Classes de poluição:} o CPI foi discretizado em três quantis (\textit{Low}, \textit{Moderate}, \textit{High}) para análises condicionais.
+    \item \textbf{Atributos temporais:} extraíram-se \texttt{month}, \texttt{weekday} e \texttt{day\_period} (\texttt{ngt, mng, aft, eve}) para investigar sazonalidade diária e semanal.
+\end{itemize}
+
+\subsection{Análise exploratória (EDA) e visualizações}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/histograms_univariate_selected.png}
+    \caption{Histogramas univariados — seleção de variáveis. Distribuições assimétricas com caudas longas em poluentes sugerem picos esporádicos; a densidade suavizada realça a não normalidade.}
+    \label{fig:histograms}
 \end{figure}
+
+\paragraph{Boxplots e outliers.}
+A Figura~\ref{fig:boxplots_selected} apresenta boxplots das variáveis selecionadas (\texttt{NOx(GT), C6H6(GT), PT08.S3(NOx), PT08.S2(NMHC), T, RH}). \textbf{Interpretação:} evidenciam-se \emph{outliers} extremos, assimetria e amplitudes distintas entre sensores e variáveis meteorológicas; tal padrão sugere estatísticas robustas e, em modelagem, eventual winsorização.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/boxplot_selected.png}
+    \caption{Boxplots — subconjunto de preditores e variáveis meteorológicas.}
+    \label{fig:boxplots_selected}
+\end{figure}
+
+\paragraph{Série temporal resumida e distribuições.}
+A Figura~\ref{fig:summary_selected} combina séries temporais, histogramas e boxplots compactos para colunas selecionadas, permitindo avaliar lacunas temporais e padrões sazonais.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/air_quality_summary_selected.png}
+    \caption{Séries temporais, histogramas e boxplots (seleção). Notar pontos que marcam valores ausentes e variações mensais.}
+    \label{fig:summary_selected}
+\end{figure}
+
+\paragraph{Distribuições condicionadas por classes e por tempo.}
+As visualizações estratificadas por classe de poluição e por recortes temporais mostram deslocamentos de nível em sensores correlacionados a NOx/NO2 e padrões sazonais coerentes com meteorologia.
+
+\paragraph{Matriz de correlação.}
+A Figura~\ref{fig:corr} apresenta a matriz de correlação de Pearson entre preditores numéricos.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/predictors_correlation_matrix.png}
+    \caption{Matriz de correlação de Pearson entre preditores. Observa-se multicolinearidade forte entre leituras de sensores e correlações relevantes com umidade, motivando redução de dimensionalidade e/ou métodos penalizados.}
+    \label{fig:corr}
+\end{figure}
+
+\paragraph{Pairplots e interações.}
+As figuras de pares documentam relações bivariadas e separação por período do dia, evidenciando dependências não triviais e efeito temporal na dispersão.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/pairplot_day_period_selected.png}
+    \caption{Pairplot dos preditores colorido por \texttt{day\_period}. Há clusterização fraca entre períodos e mudanças de densidade entre manhã, tarde e noite.}
+    \label{fig:pairplot_dayperiod}
+\end{figure}
+
+\subsection{Construção do índice de poluição e classes (detalhes)}
+\label{sec:cpi}
+\begin{enumerate}
+    \item Remover linhas com \texttt{NaN} em \texttt{CO}, \texttt{NOx}, \texttt{NO2}, \texttt{C6H6};
+    \item Calcular o z-score: \( z_{i} = (x_{i}-\mu_{i})/\sigma_{i} \);
+    \item Definir \( \mathrm{CPI} = \tfrac{1}{4}\sum_{i} z_{i} \);
+    \item Discretizar o CPI em três quantis para obter \{\textit{Low}, \textit{Moderate}, \textit{High}\}.
+\end{enumerate}
+
+\subsection{Procedimentos estatísticos adicionais}
+Calcularam-se estatísticas descritivas por classe e por recortes temporais (mês, dia da semana, período do dia). Para detecção exploratória de \emph{outliers} utilizou-se o limiar \( |z|>3 \); não houve remoção automática sem inspeção.
