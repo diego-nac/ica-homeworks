@@ -1,0 +1,8 @@
+\section{Conclusão}
+Este estudo teve como objetivo caracterizar estatisticamente os preditores, avaliar a multicolinearidade entre sensores e variáveis ambientais, aplicar a PCA de forma manual e discutir suas implicações para a calibração de sensores de baixo custo. Esses objetivos foram alcançados. A análise exploratória evidenciou distribuições assimétricas e forte correlação entre sensores MOx. A PCA condensou a informação em dois componentes principais, responsáveis por aproximadamente 77,5\% da variância total: o primeiro associado ao gradiente oxidante (NOx) e o segundo às condições micro-meteorológicas (temperatura e umidade).
+
+Entre as limitações, destacam-se a restrição temporal e espacial da base Air Quality UCI (2004–2005), a presença de valores ausentes significativos e a impossibilidade de generalização direta dos resultados. A abordagem foi descritiva, sem integração a modelos preditivos, e o tratamento de dados ausentes pode introduzir vieses.
+
+Conclui-se que a PCA é eficaz para reduzir redundância, aumentar interpretabilidade e evidenciar fatores combinados físico-químicos e ambientais nas respostas dos sensores. A principal contribuição do trabalho é demonstrar um pipeline reprodutível de pré-processamento, EDA e PCA manual, útil como etapa preliminar à calibração e modelagem preditiva. 
+
+Como trabalhos futuros, recomenda-se integrar os componentes obtidos em modelos de regressão (PCR, PLS), empregar imputação avançada de ausentes e investigar abordagens robustas de PCA aplicadas à calibração em redes de sensores de baixo custo.
