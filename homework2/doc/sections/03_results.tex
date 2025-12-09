@@ -1,2 +1,109 @@
-\section{Results}
-Reporte resultados de pré-processamento (percentual de faltantes, variáveis transformadas), estatísticas-resumo, correlações, PCA (variância explicada, loadings mais relevantes) e qualquer resultado adicional solicitado nas \textit{guidelines}.
+\section{Resultados}
+\label{sec:resultados}
+
+\subsection{Caracterização do Conjunto de Dados}
+
+\input{tables/caracterizacao}
+
+\subsection{Análise Exploratória}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/eda_temporal_behavior.png}
+\caption{Série temporal da concentração de NO$_2$}
+\label{fig:eda_temporal_behavior}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/eda_boxplots_outliers.png}
+\caption{Distribuição normalizada das variáveis}
+\label{fig:eda_boxplots_outliers}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/hist_preprocess.png}
+\caption{Efeito do pré-processamento em PT08.S3(NOx)}
+\label{fig:hist_preprocess}
+\end{figure}
+
+\subsection{Modelos de Regressão}
+
+\subsubsection{Regressão Linear Ordinária (OLS)}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/ols_manual_vs_real.png}
+\caption{Regressão linear manual: valores observados vs previstos}
+\label{fig:ols_manual_vs_real}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/ols_cv_boxplot.png}
+\caption{Distribuição do RMSE na validação cruzada (OLS manual)}
+\label{fig:ols_cv_boxplot}
+\end{figure}
+
+\subsubsection{Regressão Ridge}
+
+\input{tables/resultados_ridge}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/ridge_cv_profile.png}
+\caption{RMSE e R² da validação cruzada para Ridge}
+\label{fig:ridge_cv_profile}
+\end{figure}
+
+\subsubsection{Regressão PLS}
+
+\input{tables/resultados_pls}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/pls_cv_profile.png}
+\caption{RMSE e R² da validação cruzada para PLS}
+\label{fig:pls_cv_profile}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/pls_projection.png}
+\caption{Projeção supervisionada via PLS}
+\label{fig:pls_projection}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/pls_real_vs_pred.png}
+\caption{PLS: observados vs previstos}
+\label{fig:pls_real_vs_pred}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/pls_loadings.png}
+\caption{Cargas das variáveis no primeiro componente PLS}
+\label{fig:pls_loadings}
+\end{figure}
+
+\subsubsection{Rede Neural MLP}
+
+\input{tables/resultados_mlp}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/mlp_real_vs_pred.png}
+\caption{MLP: observados vs previstos}
+\label{fig:mlp_real_vs_pred}
+\end{figure}
+
+\subsection{Comparação de Desempenho}
+
+\input{tables/desempenho_modelos}
+
+\subsection{Importância das Variáveis}
+
+\input{tables/importancia_variaveis}
