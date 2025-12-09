@@ -6,7 +6,7 @@
 
 Este trabalho utiliza o conjunto de dados \textit{Air Quality} do repositório UCI, composto por respostas horárias de uma matriz de sensores químicos de óxido metálico (MOx) e por medições de referência de poluentes e variáveis meteorológicas em um ambiente urbano altamente poluído, ao nível da rua, em uma cidade italiana, no período de março de 2004 a fevereiro de 2005. Após a remoção de colunas vazias, o tratamento do código de valor ausente (\texttt{-200}) e o descarte de linhas com valores faltantes, o conjunto resultante utilizado na modelagem contém \textbf{9\,471} observações completas, abrangendo o período de 2004–2005, conforme resumido na Tabela~\ref{tab:caracterizacao}. A tabela também explicita os sensores considerados, as variáveis meteorológicas, a assimetria do alvo e os principais preditores com alta assimetria, o que fornece uma visão sintética do ponto de partida para a calibração.
 
-As variáveis seguem a nomenclatura original do conjunto \textit{Air Quality}. As medições de referência de poluentes incluem: CO(GT), concentração horária média de monóxido de carbono em mg\,m$^{-3}$; NMHC(GT), concentração de hidrocarbonetos não metânicos em $\mu$g\,m$^{-3}$; C6H6(GT), concentração horária média de benzeno em $\mu$g\,m$^{-3}$; NOx(GT), concentração horária média de NO$_x$ em ppb; e NO2(GT), concentração horária média de NO$_2$ em $\mu$g\,m$^{-3}$, utilizada como variável alvo neste estudo. As variáveis PT08.S1(CO), PT08.S2(NMHC), PT08.S3(NOx), PT08.S4(NO2) e PT08.S5(O3) representam as respostas horárias médias de cinco sensores MOx (óxidos de estanho, titânia, tungstênio e índio), nominalmente direcionados à detecção de CO, compostos orgânicos voláteis, NO$_x$, NO$_2$ e O$_3$, respectivamente. As variáveis meteorológicas utilizadas como preditores são: T (temperatura do ar em $^\circ$C), RH (umidade relativa em \%) e AH (umidade absoluta em g\,m$^{-3}$) \cite{devito2008}.
+As variáveis seguem a nomenclatura original do conjunto \textit{Air Quality}. As medições de referência de poluentes incluem: CO(GT), concentração horária média de monóxido de carbono em mg/m$^{-3}$; NMHC(GT), concentração de hidrocarbonetos não metânicos em $\mu$g/m$^{-3}$; C6H6(GT), concentração horária média de benzeno em $\mu$g/m$^{-3}$; NOx(GT), concentração horária média de NO$_x$ em ppb(partes por bilhão); e NO2(GT), concentração horária média de NO$_2$ em $\mu$g/m$^{-3}$, utilizada como variável alvo neste estudo. As variáveis \textbf{PT08.S1}(CO), \textbf{PT08.S2}(NMHC), \textbf{PT08.S3}(NOx), \textbf{PT08.S4}(NO2) e \textbf{PT08.S5}(O3) representam as respostas horárias médias de cinco sensores MOx, nominalmente direcionados à detecção de CO, compostos orgânicos voláteis, NO$_x$, NO$_2$ e O$_3$, respectivamente. As variáveis meteorológicas utilizadas como preditores são: \textbf{T} (temperatura do ar em $^\circ$C), \textbf{RH} (umidade relativa em \%) e \textbf{AH} (umidade absoluta em g/m$^{-3}$) \cite{devito2008}.
 
 Para atendimento às boas práticas de documentação, as tags e unidades originais são mantidas e detalhadas na Tabela~\ref{tab:caracterizacao}, permitindo relacionar significado físico e papel estatístico nos modelos.
 
@@ -15,7 +15,7 @@ Para atendimento às boas práticas de documentação, as tags e unidades origin
 
 A análise exploratória tem dois objetivos principais: (i) caracterizar o comportamento temporal da concentração de NO$_2$ e (ii) identificar assimetrias, escalas distintas e possíveis valores extremos (outliers) nas variáveis preditoras, que podem impactar o ajuste de modelos lineares.
 
-A Figura~\ref{fig:eda_temporal_behavior} apresenta a série temporal de NO2(GT) ao longo do período monitorado. O eixo horizontal representa o índice temporal (observações horárias em sequência cronológica), enquanto o eixo vertical representa a concentração de NO$_2$ em $\mu$g\,m$^{-3}$. Observa-se grande variabilidade, com picos relevantes associados às condições urbanas.
+A Figura~\ref{fig:eda_temporal_behavior} apresenta a série temporal de NO2(GT) ao longo do período monitorado. O eixo horizontal representa o índice temporal (observações horárias em sequência cronológica), enquanto o eixo vertical representa a concentração de NO$_2$ em $\mu$g/m$^{-3}$. Observa-se grande variabilidade, com picos relevantes associados às condições urbanas.
 
 Para análise de valores extremos das variáveis preditoras, a Figura~\ref{fig:eda_boxplots_outliers} apresenta boxplots de preditores normalizados por min–max. A paleta \texttt{viridis} foi adotada pela legibilidade em impressão monocromática. Observa-se caudas longas em variáveis como NOx(GT), NMHC(GT) e CO(GT), motivando as transformações descritas adiante.
 
@@ -25,35 +25,79 @@ O pré-processamento foi conduzido em duas etapas:
 
 \begin{enumerate}
 \item \textbf{Transformação logarítmica}
-\ \\ Aplicada a variáveis com assimetria $|\text{skew}| > 0{,}75$, via $\text{log1p}(x)$.
+\ \\ Aplicada a variáveis com assimetria $|\text{skew}| > 0{,}75$, via $\text{log1p}(x) = \text{log(1+x)}$  .
 \item \textbf{Padronização Z-score}
-\ \\ Média e desvio padrão ajustados exclusivamente no treino, reduzindo leakage.
+\ \\ A padronização Z-score foi aplicada para tornar as variáveis comparáveis em escala, reduzindo a influência de amplitudes distintas no ajuste dos modelos. Cada variável foi transformada segundo: \begin{equation}
+    z = \frac{x - \mu}{\sigma}
+\end{equation}
+Onde $\mu$ representa a média e $\sigma$ o desvio padrão calculados apenas no conjunto de treino, evitando \textit{data leakage}. Essa etapa garante que modelos sensíveis à escala, como Ridge, PLS e MLP, operem sobre dados de treino devidamente normalizados.
 \end{enumerate}
 
 A Figura~\ref{fig:hist_preprocess} ilustra os efeitos das transformações para um exemplo representativo (PT08.S3(NOx)).
 
-Uma matriz de correlação foi construída usando o conjunto transformado para verificar multicolinearidade e orientar a escolha dos modelos penalizados e por componentes.
+Uma matriz de correlação foi construída usando o conjunto transformado para verificar multicolinearidade e orientar a escolha dos modelos penalizados e por componentes, como visto em \cite{Souza2025EDA}.
 
 \subsection{Modelos de regressão e estratégias de validação}
 \label{subsec:modelos}
 
-A modelagem foi estruturada de forma incremental: OLS → Ridge → PLS → MLP. As métricas utilizadas foram RMSE e $R^2$, tanto em teste quanto em validação cruzada 10-fold. Os resultados consolidados encontram-se na Tabela~\ref{tab:desempenho_modelos}.
+A modelagem foi estruturada de forma incremental — OLS, Ridge, PLS e MLP — e avaliada por duas métricas principais: RMSE e $R^{2}$. O erro quadrático médio (RMSE) quantifica a magnitude média dos resíduos e é definido por
+\begin{equation}
+\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2},
+\end{equation}
+em que $y_i$ representa o valor observado, $\hat{y}_i$ o valor previsto pelo modelo e $n$ o número de observações. As mesmas variáveis aparecem na definição do coeficiente de determinação ($R^{2}$), que expressa a proporção da variabilidade explicada pelo modelo:
+\begin{equation}
+R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}.
+\end{equation}
+Ambas as métricas foram calculadas nos conjuntos de teste e em validação cruzada 10-fold, e seus resultados consolidados estão apresentados na Tabela~\ref{tab:desempenho_modelos}.
+
 
 \subsubsection{Regressão Linear Ordinária (OLS)}
 
-Implementada manualmente via equação normal $(X^\top X)^{-1}X^\top y$ e comparada com \texttt{LinearRegression}. A Figura~\ref{fig:ols_manual_vs_real} compara valores reais e previstos no conjunto de teste. A Figura~\ref{fig:ols_cv_boxplot} especifica a variabilidade do RMSE na validação cruzada.
+
+A Regressão Linear Ordinária (OLS) foi implementada manualmente utilizando a equação normal
+\begin{equation}
+    \hat{\beta} = (X^\top X)^{-1} X^\top y,
+\end{equation}
+e seus resultados foram comparados com os obtidos pelo método \texttt{LinearRegression} da biblioteca \texttt{scikit-learn}. A Figura~\ref{fig:ols_manual_vs_real} apresenta a comparação entre os valores reais e previstos no conjunto de teste, enquanto a Figura~\ref{fig:ols_cv_boxplot} ilustra a variabilidade do RMSE obtida por validação cruzada 10-fold.
 
 \subsubsection{Regressão Ridge (L2)}
 
-Empregada para mitigar multicolinearidade. A seleção de $\lambda$ foi realizada em escala logarítmica usando \texttt{RidgeCV}. O perfil de desempenho em função de $\lambda$ está na Figura~\ref{fig:ridge_cv_profile}. A Tabela~\ref{tab:resultados_ridge} apresenta o valor ótimo de $\lambda$ e desempenho final.
+A Regressão Ridge, ou penalização L2, é definida pela função de custo:
+\begin{equation}
+    J(\beta) = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^{p} \beta_j^2,
+\end{equation}
+onde o termo de regularização, controlado pelo parâmetro $\lambda$, ajuda a mitigar problemas de multicolinearidade entre os preditores. A escolha do valor ótimo de $\lambda$ foi realizada em escala logarítmica utilizando \texttt{RidgeCV}. O desempenho do modelo em função de diferentes valores de $\lambda$ é apresentado na Figura~\ref{fig:ridge_cv_profile}, e os resultados finais, incluindo o valor selecionado de $\lambda$, estão sumarizados na Tabela~\ref{tab:resultados_ridge}.
+
 
 \subsubsection{Regressão por Componentes Parciais (PLS)}
 
-Avaliou-se de 1 a 15 componentes via validação cruzada. A Figura~\ref{fig:pls_cv_profile} ilustra o comportamento de RMSE e $R^2$. A projeção do primeiro componente é mostrada na Figura~\ref{fig:pls_projection}. A relação Real $\times$ Previsto está na Figura~\ref{fig:pls_real_vs_pred} e os loadings na Figura~\ref{fig:pls_loadings}. Resultados quantitativos estão na Tabela~\ref{tab:resultados_pls}.
+A Regressão por Componentes Parciais (PLS) busca decompor a matriz de preditores e o vetor alvo segundo:
+\begin{align}
+X &= TP^\top + E, \\
+y &= Tq + f, \\
+t &= Xw, \\
+\hat{\beta} &= W (P^\top W)^{-1} q, \\
+\hat{y} &= X \hat{\beta},
+\end{align}
+onde $T$ e $P$ representam scores e loadings de $X$, $q$ e $f$ correspondem à projeção de $y$, e $E$ é o resíduo. O número de componentes variou de 1 a 15, avaliado via validação cruzada. A Figura~\ref{fig:pls_cv_profile} mostra o comportamento do RMSE e do $R^2$ em função do número de componentes, enquanto a Figura~\ref{fig:pls_projection} apresenta a projeção do primeiro componente. A relação entre valores reais e previstos aparece na Figura~\ref{fig:pls_real_vs_pred}, e os loadings são ilustrados na Figura~\ref{fig:pls_loadings}. Os resultados quantitativos encontram-se na Tabela~\ref{tab:resultados_pls}.
+
 
 \subsubsection{Rede Neural do tipo MLP}
 
-Foi implementado um \textit{Multilayer Perceptron} com 64 neurônios na camada oculta, função ReLU e otimizador Adam, com \textit{early stopping}. O desempenho encontra-se na Tabela~\ref{tab:resultados_mlp}. A dispersão Real $\times$ Previsto está na Figura~\ref{fig:mlp_real_vs_pred}.
+A modelagem tamb\'em incluiu uma Rede Neural do tipo \textit{Multilayer Perceptron} (MLP). O modelo foi configurado com uma camada oculta contendo 64 neur\^onios, utilizando a fun\c{c}\~ao de ativa\c{c}\~ao ReLU, definida por
+\begin{equation}
+\text{ReLU}(z) = \max(0, z).
+\end{equation}
+O treinamento foi realizado com o otimizador Adam, cujas atualiza\c{c}\~oes de pesos seguem:
+\begin{align}
+m_t &= \beta_1 m_{t-1} + (1-\beta_1) g_t, \\
+v_t &= \beta_2 v_{t-1} + (1-\beta_2) g_t^2, \\
+\hat{m}_t &= \frac{m_t}{1-\beta_1^t}, \\
+\hat{v}_t &= \frac{v_t}{1-\beta_2^t}, \\
+\theta_t &= \theta_{t-1} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}.
+\end{align}
+Para evitar sobreajuste, utilizou-se \textit{early stopping}, interrompendo o treinamento quando a perda de valida\c{c}\~ao deixou de apresentar melhora. Os resultados quantitativos est\~ao apresentados na Tabela~\ref{tab:resultados_mlp}, enquanto a dispers\~ao Real~$\times$~Previsto encontra-se na respectiva figura.
+
 
 \subsection{Métricas de desempenho e importância de variáveis}
 \label{subsec:metrics}
