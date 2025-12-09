@@ -1,13 +1,17 @@
 \begin{table}[t]
-  \centering
-  \caption{Resultados do Modelo MLP}
-  \label{tab:resultados_mlp}
+\centering
+\caption{Resultados do Modelo MLP}
+\label{tab:resultados_mlp}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lrr}
+\toprule
 Modelo & RMSE Teste & R2 Teste \\
-OLS Sklearn & 10.403632 & 0.896244 \\
+\midrule
+OLS Sklearn   & 10.403632 & 0.896244 \\
 MLP (1 hidden) & 13.217788 & 0.832521 \\
 Ridge Sklearn & 10.464948 & 0.895018 \\
 PLS (best CV) & 10.441786 & 0.895482 \\
+\bottomrule
 \end{tabular}
-
+}
 \end{table}

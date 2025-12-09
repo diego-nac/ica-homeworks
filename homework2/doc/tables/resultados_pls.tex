@@ -1,10 +1,14 @@
 \begin{table}[t]
-  \centering
-  \caption{Resultados do Modelo PLS}
-  \label{tab:resultados_pls}
+\centering
+\caption{Resultados do Modelo PLS}
+\label{tab:resultados_pls}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lrrrrr}
-Modelo & Componentes & RMSE Teste & R2 Teste & RMSE CV (10-fold) & R2 CV (10-fold) \\
+\toprule
+Modelo & Componentes & RMSE Teste & $R^2$ Teste & RMSE CV (10-fold) & $R^2$ CV (10-fold) \\
+\midrule
 PLSRegression (best CV) & 9 & 10.441786 & 0.895482 & 10.642892 & 0.876887 \\
+\bottomrule
 \end{tabular}
-
+}
 \end{table}
