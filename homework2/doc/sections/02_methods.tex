@@ -4,11 +4,11 @@
 \subsection{Conjunto de dados e variáveis}
 \label{subsec:dataset}
 
-Este trabalho utiliza o conjunto de dados \textit{Air Quality} do repositório UCI, composto por respostas horárias de uma matriz de sensores químicos de óxido metálico (MOx) e por medições de referência de poluentes e variáveis meteorológicas em um ambiente urbano altamente poluído, ao nível da rua, em uma cidade italiana, no período de março de 2004 a fevereiro de 2005. Após a remoção de colunas vazias, o tratamento do código de valor ausente (\texttt{-200}) e o descarte de linhas com valores faltantes, o conjunto resultante utilizado na modelagem contém \textbf{9\,471} observações completas, abrangendo o período de 2004–2005, conforme resumido na Tabela~\ref{tab:caracterizacao}. A tabela também explicita os sensores considerados, as variáveis meteorológicas, a assimetria do alvo e os principais preditores com alta assimetria, o que fornece uma visão sintética do ponto de partida para a calibração.
+Este trabalho utiliza o conjunto de dados \textit{Air Quality} do repositório UCI, composto por respostas horárias de uma matriz de sensores químicos de óxido metálico (MOx) e por medições de referência de poluentes e variáveis meteorológicas em um ambiente urbano altamente poluído, ao nível da rua, em uma cidade italiana, no período de março de 2004 a fevereiro de 2005. Após a remoção de colunas vazias, o tratamento do código de valor ausente (\texttt{-200}) e o descarte de linhas com valores faltantes, o conjunto resultante utilizado na modelagem contém \textbf{9\,471} observações completas, abrangendo o período de 2004–2005. Esse conjunto inclui os sensores considerados, as variáveis meteorológicas, a assimetria do alvo e os principais preditores com alta assimetria, oferecendo uma visão sintética do ponto de partida para a calibração.
 
 As variáveis seguem a nomenclatura original do conjunto \textit{Air Quality}. As medições de referência de poluentes incluem: CO(GT), concentração horária média de monóxido de carbono em mg/m$^{-3}$; NMHC(GT), concentração de hidrocarbonetos não metânicos em $\mu$g/m$^{-3}$; C6H6(GT), concentração horária média de benzeno em $\mu$g/m$^{-3}$; NOx(GT), concentração horária média de NO$_x$ em ppb(partes por bilhão); e NO2(GT), concentração horária média de NO$_2$ em $\mu$g/m$^{-3}$, utilizada como variável alvo neste estudo. As variáveis \textbf{PT08.S1}(CO), \textbf{PT08.S2}(NMHC), \textbf{PT08.S3}(NOx), \textbf{PT08.S4}(NO2) e \textbf{PT08.S5}(O3) representam as respostas horárias médias de cinco sensores MOx, nominalmente direcionados à detecção de CO, compostos orgânicos voláteis, NO$_x$, NO$_2$ e O$_3$, respectivamente. As variáveis meteorológicas utilizadas como preditores são: \textbf{T} (temperatura do ar em $^\circ$C), \textbf{RH} (umidade relativa em \%) e \textbf{AH} (umidade absoluta em g/m$^{-3}$) \cite{devito2008}.
 
-Para atendimento às boas práticas de documentação, as tags e unidades originais são mantidas e detalhadas na Tabela~\ref{tab:caracterizacao}, permitindo relacionar significado físico e papel estatístico nos modelos.
+Para atendimento às boas práticas de documentação, as tags e unidades originais são mantidas e descritas textualmente, permitindo relacionar significado físico e papel estatístico nos modelos.
 
 \subsection{Análise exploratória e pré-processamento}
 \label{subsec:eda}
@@ -17,7 +17,7 @@ A análise exploratória tem dois objetivos principais: (i) caracterizar o compo
 
 A Figura~\ref{fig:eda_temporal_behavior} apresenta a série temporal de NO2(GT) ao longo do período monitorado. O eixo horizontal representa o índice temporal (observações horárias em sequência cronológica), enquanto o eixo vertical representa a concentração de NO$_2$ em $\mu$g/m$^{-3}$. Observa-se grande variabilidade, com picos relevantes associados às condições urbanas.
 
-Para análise de valores extremos das variáveis preditoras, a Figura~\ref{fig:eda_boxplots_outliers} apresenta boxplots de preditores normalizados por min–max. A paleta \texttt{viridis} foi adotada pela legibilidade em impressão monocromática. Observa-se caudas longas em variáveis como NOx(GT), NMHC(GT) e CO(GT), motivando as transformações descritas adiante.
+Para análise de valores extremos das variáveis preditoras, a Figura~\ref{fig:eda_boxplots_outliers} apresenta boxplots de preditores normalizados por min–max. Observa-se caudas longas em variáveis como NOx(GT), NMHC(GT) e CO(GT), motivando as transformações descritas adiante.
 
 Definimos o vetor alvo $y =$ NO2(GT), enquanto o vetor de preditores $X$ agregou todas as demais variáveis numéricas. A divisão entre \textbf{treino} (75\%) e \textbf{teste} (25\%) foi feita com \texttt{random\_state = 42}, garantindo reprodutibilidade.
 
@@ -32,8 +32,6 @@ O pré-processamento foi conduzido em duas etapas:
 \end{equation}
 Onde $\mu$ representa a média e $\sigma$ o desvio padrão calculados apenas no conjunto de treino, evitando \textit{data leakage}. Essa etapa garante que modelos sensíveis à escala, como Ridge, PLS e MLP, operem sobre dados de treino devidamente normalizados.
 \end{enumerate}
-
-A Figura~\ref{fig:hist_preprocess} ilustra os efeitos das transformações para um exemplo representativo (PT08.S3(NOx)).
 
 Uma matriz de correlação foi construída usando o conjunto transformado para verificar multicolinearidade e orientar a escolha dos modelos penalizados e por componentes, como visto em \cite{Souza2025EDA}.
 
@@ -58,7 +56,7 @@ A Regressão Linear Ordinária (OLS) foi implementada manualmente utilizando a e
 \begin{equation}
     \hat{\beta} = (X^\top X)^{-1} X^\top y,
 \end{equation}
-e seus resultados foram comparados com os obtidos pelo método \texttt{LinearRegression} da biblioteca \texttt{scikit-learn}. A Figura~\ref{fig:ols_manual_vs_real} apresenta a comparação entre os valores reais e previstos no conjunto de teste, enquanto a Figura~\ref{fig:ols_cv_boxplot} ilustra a variabilidade do RMSE obtida por validação cruzada 10-fold.
+e seus resultados foram comparados com os obtidos pelo método \texttt{LinearRegression} da biblioteca \texttt{scikit-learn}. A Figura~\ref{fig:ols_cv_boxplot} ilustra a variabilidade do RMSE obtida por validação cruzada 10-fold.
 
 \subsubsection{Regressão Ridge (L2)}
 
@@ -79,7 +77,7 @@ t &= Xw, \\
 \hat{\beta} &= W (P^\top W)^{-1} q, \\
 \hat{y} &= X \hat{\beta},
 \end{align}
-onde $T$ e $P$ representam scores e loadings de $X$, $q$ e $f$ correspondem à projeção de $y$, e $E$ é o resíduo. O número de componentes variou de 1 a 15, avaliado via validação cruzada. A Figura~\ref{fig:pls_cv_profile} mostra o comportamento do RMSE e do $R^2$ em função do número de componentes, enquanto a Figura~\ref{fig:pls_projection} apresenta a projeção do primeiro componente. A relação entre valores reais e previstos aparece na Figura~\ref{fig:pls_real_vs_pred}, e os loadings são ilustrados na Figura~\ref{fig:pls_loadings}. Os resultados quantitativos encontram-se na Tabela~\ref{tab:resultados_pls}.
+onde $T$ e $P$ representam scores e loadings de $X$, $q$ e $f$ correspondem à projeção de $y$, e $E$ é o resíduo. O número de componentes variou de 1 a 15, avaliado via validação cruzada. A Figura~\ref{fig:pls_cv_profile} mostra o comportamento do RMSE e do $R^2$ em função do número de componentes, enquanto a Figura~\ref{fig:pls_loadings} ilustra os loadings do primeiro componente.
 
 
 \subsubsection{Rede Neural do tipo MLP}
@@ -102,8 +100,6 @@ Para evitar sobreajuste, utilizou-se \textit{early stopping}, interrompendo o tr
 \subsection{Métricas de desempenho e importância de variáveis}
 \label{subsec:metrics}
 
-A Tabela~\ref{tab:desempenho_modelos} apresenta RMSE e $R^2$ médios em validação cruzada e em teste para todos os modelos.  
-
-A Tabela~\ref{tab:importancia_variaveis} lista os coeficientes padronizados do melhor modelo linear regularizado (Ridge), ranqueando as variáveis por contribuição relativa na calibração do NO$_2$.
+A Tabela~\ref{tab:desempenho_modelos} apresenta RMSE e $R^2$ médios em validação cruzada e em teste para todos os modelos. A importância relativa das variáveis é discutida a partir dos coeficientes padronizados do modelo Ridge e dos loadings do primeiro componente PLS.
 
 O conjunto de análises descrito estabelece um pipeline robusto, relacionando a qualidade do pré-processamento, a justificativa de seleção dos modelos e o protocolo de validação empregado. Todas as figuras e tabelas citadas têm função metodológica clara e serão analisadas criticamente nos Resultados.
