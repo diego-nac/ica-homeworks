@@ -9,7 +9,7 @@ Este trabalho utiliza o conjunto de dados \textit{Air Quality} do repositório U
 As variáveis seguem a nomenclatura original do conjunto \textit{Air Quality}. As medições de referência de poluentes incluem: CO(GT), concentração horária média de monóxido de carbono em mg/m$^{-3}$; NMHC(GT), concentração de hidrocarbonetos não metânicos em $\mu$g/m$^{-3}$; C6H6(GT), concentração horária média de benzeno em $\mu$g/m$^{-3}$; NOx(GT), concentração horária média de NO$_x$ em ppb(partes por bilhão); e NO2(GT), concentração horária média de NO$_2$ em $\mu$g/m$^{-3}$, utilizada como variável alvo neste estudo. As variáveis \textbf{PT08.S1}(CO), \textbf{PT08.S2}(NMHC), \textbf{PT08.S3}(NOx), \textbf{PT08.S4}(NO2) e \textbf{PT08.S5}(O3) representam as respostas horárias médias de cinco sensores MOx, nominalmente direcionados à detecção de CO, compostos orgânicos voláteis, NO$_x$, NO$_2$ e O$_3$, respectivamente. As variáveis meteorológicas utilizadas como preditores são: \textbf{T} (temperatura do ar em $^\circ$C), \textbf{RH} (umidade relativa em \%) e \textbf{AH} (umidade absoluta em g/m$^{-3}$) \cite{devito2008}.
 
 Para atendimento às boas práticas de documentação, as tags e unidades originais são mantidas e detalhadas na Tabela~\ref{tab:caracterizacao}, permitindo relacionar significado físico e papel estatístico nos modelos.
-
+\input{tables/caracterizacao}
 \subsection{Análise exploratória e pré-processamento}
 \label{subsec:eda}
 
@@ -96,7 +96,7 @@ v_t &= \beta_2 v_{t-1} + (1-\beta_2) g_t^2, \\
 \hat{v}_t &= \frac{v_t}{1-\beta_2^t}, \\
 \theta_t &= \theta_{t-1} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}.
 \end{align}
-Para evitar sobreajuste, utilizou-se \textit{early stopping}, interrompendo o treinamento quando a perda de valida\c{c}\~ao deixou de apresentar melhora. Os resultados quantitativos est\~ao apresentados na Tabela~\ref{tab:resultados_mlp}, enquanto a dispers\~ao Real~$\times$~Previsto encontra-se na respectiva figura.
+Para evitar sobreajuste, utilizou-se \textit{early stopping}, interrompendo o treinamento quando a perda de valida\c{c}\~ao deixou de apresentar melhora. Os resultados quantitativos est\~ao apresentados na Tabela~\ref{tab:resultados_mlp}, enquanto a dispers\~ao Real~$\times$~Previsto encontra-se na figura \ref{fig:mlp_real_vs_pred}.
 
 
 \subsection{Métricas de desempenho e importância de variáveis}
