@@ -1,0 +1,23 @@
+\begin{table}[t]
+  \centering
+  \caption{Caracterização do Conjunto de Dados}
+  \label{tab:caracterizacao}
+
+  \resizebox{\columnwidth}{!}{
+  \begin{tabular}{l l}
+    \toprule
+    \textbf{Característica} & \textbf{Valor} \\
+    \midrule
+    Número de observações após limpeza & 9471 \\
+    Período da coleta & 2004--2005 \\
+    Sensores utilizados & PT08.S1(CO), PT08.S2(NMHC), PT08.S3(NOx), PT08.S4(NO2), PT08.S5(O3) \\
+    Variáveis meteorológicas & T (Temperatura), RH (Umidade Relativa), AH (Umidade Absoluta) \\
+    Assimetria do target (NO2) & 0.62 \\
+    Principais preditores com alta assimetria (|skew| > 0.75) 
+        & NOx(GT): 1.72, NMHC(GT): 1.56, CO(GT): 1.37 \\
+    Percentual de missing removido (\%) & 0.00 \\
+    \bottomrule
+  \end{tabular}
+  }
+
+\end{table}

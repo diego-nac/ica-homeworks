@@ -1,0 +1,13 @@
+\begin{table}[t]
+  \centering
+  \caption{Desempenho em teste dos modelos (comparando com MLP)}
+  \label{tab:resultados_mlp}
+\begin{tabular}{lrr}
+Modelo & $RMSE_\text{teste}$ & $R^{2}_\text{teste}$ \\
+OLS (sklearn) & 10.403632 & 0.896244 \\
+MLP (1 camada oculta) & 13.217788 & 0.832521 \\
+Ridge (sklearn) & 10.464948 & 0.895018 \\
+PLS (CV \^otimo) & 10.441786 & 0.895482 \\
+\end{tabular}
+}
+\end{table}
