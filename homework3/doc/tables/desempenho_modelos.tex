@@ -1,17 +1,16 @@
-\begin{table}[t]
+\begin{table}[ht]
 \centering
-\caption{Desempenho dos Modelos}
+\caption{Comparação de desempenho dos modelos.}
 \label{tab:desempenho_modelos}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{lrrrr}
+\begin{tabular}{l c c}
 \toprule
-Modelo & $RMSE_{\text{CV}}$ & $R^{2}_{\text{CV}}$ & $RMSE_{\text{teste}}$ & $R^{2}_{\text{teste}}$ \\
+Modelo & Accuracy & F1\_macro \\
 \midrule
-OLS   & 10.931799 & 0.872322 & 10.403632 & 0.896244 \\
-Ridge & 10.756799 & 0.877137 & 10.464948 & 0.895018 \\
-PLS   & 10.642892 & 0.876887 & 10.441786 & 0.895482 \\
-MLP   & 13.564981 & 0.805638 & 13.217788 & 0.832521 \\
+MLP & 0.8301 & 0.8278 \\
+Logistic Regression & 0.8243 & 0.8213 \\
+QDA & 0.8161 & 0.8149 \\
+KNN & 0.8176 & 0.8096 \\
+LDA & 0.8080 & 0.7956 \\
 \bottomrule
 \end{tabular}
-}
 \end{table}

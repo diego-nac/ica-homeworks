@@ -66,13 +66,13 @@ O índice de poluição multivariado foi então definido como:
 \end{equation}
 em que $P$ representa o número de poluentes considerados.
 
-A Fig.~\ref{fig:hist_indice_poluicao} apresenta a distribuição empírica do índice de poluição multivariado, construída a partir do conjunto de dados \textit{Air Quality}.
+A Figura~\ref{fig:eda_temporal_behavior} ilustra a evolução temporal mensal do índice de poluição multivariado ao longo do período analisado. Essa visualização permite verificar a coerência temporal do índice construído e sua capacidade de sintetizar a variabilidade conjunta dos poluentes considerados, sem introduzir instabilidades decorrentes do processo de agregação.
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 \centering
-\includegraphics[width=0.4\textwidth]{figures/target_distribution.pdf}
-\caption{Distribuição do índice de poluição multivariado.}
-\label{fig:hist_indice_poluicao}
+\includegraphics[width=\columnwidth]{figures/eda_temporal_behavior_monthly.pdf}
+\caption{Série temporal mensal do índice composto de poluição.}
+\label{fig:eda_temporal_behavior}
 \end{figure}
 
 Para a formulação do problema de classificação, o índice contínuo foi discretizado em classes ordinais por meio de quantis empíricos:
@@ -87,24 +87,25 @@ C_5, & \text{IP} > q_{0.90}
 \end{cases}
 \end{equation}
 
-A Tabela~\ref{tab:distribuicao_classes} apresenta a distribuição final das classes de poluição obtidas após a discretização.
+A Tabela~\ref{tab:caracterizacao} apresenta a distribuição percentual das classes obtidas após a discretização do índice. A divisão balanceada decorre diretamente da definição dos quantis e estabelece um cenário experimental adequado para a avaliação comparativa de classificadores multiclasse.
 
-\begin{table}[htbp]
-\centering
-\caption{Distribuição das classes do índice de poluição multivariado.}
-\label{tab:distribuicao_classes}
-\begin{tabular}{l r r}
-\toprule
-\textbf{Classe} & \textbf{Frequência} & \textbf{Percentual (\%)} \\
-\midrule
-C$_1$ (Muito baixo) & 695  & 10,01 \\
-C$_2$ (Baixo)       & 1\,388 & 20,00 \\
-C$_3$ (Moderado)    & 2\,776 & 39,99 \\
-C$_4$ (Alto)        & 1\,388 & 20,00 \\
-C$_5$ (Crítico)     & 694  & 10,00 \\
-\bottomrule
-\end{tabular}
+\begin{table}[t]
+  \centering
+  \caption{Distribuição percentual das classes de poluição no conjunto de dados.}
+  \label{tab:caracterizacao}
+  \begin{tabular}{l c c c}
+    \toprule
+    Classe de poluição & Total (\%) & Treino (\%) & Teste (\%) \\
+    \midrule
+    Muito baixo & 10.01 & 10.00 & 10.03 \\
+    Baixo       & 20.00 & 20.01 & 19.97 \\
+    Moderado    & 39.99 & 40.00 & 39.99 \\
+    Alto        & 20.00 & 19.99 & 20.02 \\
+    Crítico     & 10.00 & 10.00 & 9.99 \\
+    \bottomrule
+  \end{tabular}
 \end{table}
+
 \subsection{Modelos de Classificação}
 \label{subsec:modelos}
 A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos de classificação em identificar corretamente os níveis de poluição a partir das variáveis preditoras. Todos os modelos foram implementados em \textit{Python} utilizando a biblioteca \textit{scikit-learn}, responsável pela padronização das variáveis, codificação do alvo, validação cruzada, treinamento e avaliação de desempenho, garantindo um protocolo experimental reprodutível e comparável entre as abordagens consideradas \cite{scikit-learn}.
@@ -148,3 +149,14 @@ A análise foi complementada por matrizes de confusão, apresentadas na Figura~\
 \caption{Exemplo de matriz de confusão para um dos modelos avaliados.}
 \label{fig:confusion_placeholder}
 \end{figure}
+Adicionalmente, empregou-se o F1-score como métrica complementar, definido como a média harmônica entre precisão e revocação:
+\begin{equation}
+\text{F1}_c = \frac{2\,TP_c}{2\,TP_c + FP_c + FN_c},
+\end{equation}
+em que $TP_c$, $FP_c$ e $FN_c$ representam, respectivamente, os verdadeiros positivos, falsos positivos e falsos negativos da classe $c$.
+
+Para avaliação global dos modelos em cenário multiclasse, adotou-se o F1-macro, definido como a média aritmética simples dos F1-scores das classes:
+\begin{equation}
+\text{F1}_{\text{macro}} = \frac{1}{K} \sum_{c=1}^{K} \text{F1}_c,
+\end{equation}
+atribuindo o mesmo peso a todos os níveis de poluição, independentemente de sua frequência.
