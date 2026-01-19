@@ -4,102 +4,147 @@
 \subsection{Conjunto de dados e variáveis}
 \label{subsec:dataset}
 
-Este trabalho utiliza o conjunto de dados \textit{Air Quality} do repositório UCI, composto por respostas horárias de uma matriz de sensores químicos de óxido metálico (MOx) e por medições de referência de poluentes e variáveis meteorológicas em um ambiente urbano altamente poluído, ao nível da rua, em uma cidade italiana, no período de março de 2004 a fevereiro de 2005. Após a remoção de colunas vazias, o tratamento do código de valor ausente (\texttt{-200}) e o descarte de linhas com valores faltantes, o conjunto resultante utilizado na modelagem contém \textbf{9\,471} observações completas, abrangendo o período de 2004–2005. Esse conjunto inclui os sensores considerados, as variáveis meteorológicas, a assimetria do alvo e os principais preditores com alta assimetria, oferecendo uma visão sintética do ponto de partida para a calibração.
+Utiliza-se o conjunto de dados \textit{Air Quality} do repositório UCI, composto por medições horárias realizadas entre março de 2004 e abril de 2005 em um ambiente urbano ao nível da rua, caracterizado por elevada poluição atmosférica. O conjunto integra medições de referência de poluentes, respostas de uma matriz de sensores químicos de óxido metálico (MOx) e variáveis meteorológicas \cite{airqualityuci2008}.
 
-As variáveis seguem a nomenclatura original do conjunto \textit{Air Quality}. As medições de referência de poluentes incluem: CO(GT), concentração horária média de monóxido de carbono em mg/m$^{-3}$; NMHC(GT), concentração de hidrocarbonetos não metânicos em $\mu$g/m$^{-3}$; C6H6(GT), concentração horária média de benzeno em $\mu$g/m$^{-3}$; NOx(GT), concentração horária média de NO$_x$ em ppb(partes por bilhão); e NO2(GT), concentração horária média de NO$_2$ em $\mu$g/m$^{-3}$, utilizada como variável alvo neste estudo. As variáveis \textbf{PT08.S1}(CO), \textbf{PT08.S2}(NMHC), \textbf{PT08.S3}(NOx), \textbf{PT08.S4}(NO2) e \textbf{PT08.S5}(O3) representam as respostas horárias médias de cinco sensores MOx, nominalmente direcionados à detecção de CO, compostos orgânicos voláteis, NO$_x$, NO$_2$ e O$_3$, respectivamente. As variáveis meteorológicas utilizadas como preditores são: \textbf{T} (temperatura do ar em $^\circ$C), \textbf{RH} (umidade relativa em \%) e \textbf{AH} (umidade absoluta em g/m$^{-3}$) \cite{devito2008}.
+As variáveis foram organizadas em três grupos conforme sua natureza: (i) medições reais de referência (\textit{ground truth}), utilizadas como variáveis-alvo e de validação; (ii) respostas de sensores MOx, expressas em unidades arbitrárias (u.a.), que representam sinais elétricos internos dos sensores e não correspondem diretamente a concentrações físicas de poluentes; e (iii) variáveis ambientais, empregadas como preditores auxiliares. A Tabela~\ref{tab:stats-air-quality} apresenta estatísticas descritivas resumidas para cada variável, evidenciando diferenças de escala e de completude entre os grupos.
 
-Para atendimento às boas práticas de documentação, as tags e unidades originais são mantidas e descritas textualmente, permitindo relacionar significado físico e papel estatístico nos modelos.
+\begin{table}[htbp]
+\centering
+\caption{Estatísticas descritivas do conjunto de dados \textit{Air Quality}.}
+\label{tab:stats-air-quality}
+\begin{tabular}{l r r r r r}
+\toprule
+\textbf{Variável (unidade)} & \textbf{N} & \textbf{Vazios (\%)} & \textbf{Mín.} & \textbf{Média} & \textbf{Máx.} \\
+\midrule
+\multicolumn{6}{l}{\textbf{Medições reais}} \\
+CO(GT) (mg\,m$^{-3}$)            & 7\,674 & 18,97 & 0,10 & 2,15 & 11,90 \\
+C$_6$H$_6$(GT) ($\mu$g\,m$^{-3}$) & 8\,991 & 5,07  & 0,10 & 10,08 & 63,70 \\
+NO$_x$(GT) (ppb)                 & 7\,718 & 18,51 & 2,00 & 246,90 & 1\,479,00 \\
+NO$_2$(GT) ($\mu$g\,m$^{-3}$)    & 7\,715 & 18,54 & 2,00 & 113,09 & 340,00 \\
+\textbf{NMHC(GT) ($\mu$g\,m$^{-3}$)} & \textbf{914} & \textbf{90,35} & 7,00 & 218,81 & 1\,189,00 \\
+\midrule
+\multicolumn{6}{l}{\textbf{Sensores MOx (resposta elétrica, u.a.)}} \\
+PT08.S1(CO) (u.a.)   & 8\,991 & 5,07 & 647,00 & 1\,099,83 & 2\,040,00 \\
+PT08.S2(NMHC) (u.a.) & 8\,991 & 5,07 & 383,00 & 939,15 & 2\,214,00 \\
+PT08.S3(NOx) (u.a.)  & 8\,991 & 5,07 & 322,00 & 835,49 & 2\,683,00 \\
+PT08.S4(NO$_2$) (u.a.) & 8\,991 & 5,07 & 551,00 & 1\,456,26 & 2\,775,00 \\
+PT08.S5(O$_3$) (u.a.)  & 8\,991 & 5,07 & 221,00 & 1\,022,91 & 2\,523,00 \\
+\midrule
+\multicolumn{6}{l}{\textbf{Variáveis ambientais}} \\
+T ($^\circ$C)        & 8\,991 & 5,07 & -1,90 & 18,32 & 44,60 \\
+RH (\%)              & 8\,991 & 5,07 & 9,20 & 49,23 & 88,70 \\
+AH (g\,m$^{-3}$)     & 8\,991 & 5,07 & 0,18 & 1,03 & 2,23 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\subsection{Análise exploratória e pré-processamento}
-\label{subsec:eda}
+\subsection{Pré-processamento dos Dados}
+\label{subsec:preprocessamento}
 
-A análise exploratória tem dois objetivos principais: (i) caracterizar o comportamento temporal da concentração de NO$_2$ e (ii) identificar assimetrias, escalas distintas e possíveis valores extremos (outliers) nas variáveis preditoras, que podem impactar o ajuste de modelos lineares.
+O pré-processamento teve como objetivo garantir consistência estatística e viabilizar a aplicação dos algoritmos de classificação. Os dados foram carregados respeitando o separador e a codificação decimal originais, e os valores ausentes identificados pelo código \texttt{-200} foram convertidos para valores nulos. Colunas sem informação relevante e registros incompletos foram removidos. A variável \texttt{NMHC(GT)} foi excluída devido à elevada proporção de valores ausentes (superior a 90\%), o que comprometeria a robustez das análises. Em seguida, o conjunto de dados foi particionado de forma estratificada em conjuntos de treino (70\%) e teste (30\%), preservando a distribuição das classes do índice de poluição.
 
-A Figura~\ref{fig:eda_temporal_behavior} apresenta a série temporal de NO2(GT) ao longo do período monitorado. O eixo horizontal representa o índice temporal (observações horárias em sequência cronológica), enquanto o eixo vertical representa a concentração de NO$_2$ em $\mu$g/m$^{-3}$. Observa-se grande variabilidade, com picos relevantes associados às condições urbanas.
-
-Para análise de valores extremos das variáveis preditoras, a Figura~\ref{fig:eda_boxplots_outliers} apresenta boxplots de preditores normalizados por min–max. Observa-se caudas longas em variáveis como NOx(GT), NMHC(GT) e CO(GT), motivando as transformações descritas adiante.
-
-Definimos o vetor alvo $y =$ NO2(GT), enquanto o vetor de preditores $X$ agregou todas as demais variáveis numéricas. A divisão entre \textbf{treino} (75\%) e \textbf{teste} (25\%) foi feita com \texttt{random\_state = 42}, garantindo reprodutibilidade.
-
-O pré-processamento foi conduzido em duas etapas:
-
-\begin{enumerate}
-\item \textbf{Transformação logarítmica}
-\ \\ Aplicada a variáveis com assimetria $|\text{skew}| > 0{,}75$, via $\text{log1p}(x) = \text{log(1+x)}$  .
-\item \textbf{Padronização Z-score}
-\ \\ A padronização Z-score foi aplicada para tornar as variáveis comparáveis em escala, reduzindo a influência de amplitudes distintas no ajuste dos modelos. Cada variável foi transformada segundo: \begin{equation}
-    z = \frac{x - \mu}{\sigma}
+As variáveis preditoras foram normalizadas por meio da padronização \textit{z-score}, definida por:
+\begin{equation}
+z_i = \frac{x_i - \mu}{\sigma},
 \end{equation}
-Onde $\mu$ representa a média e $\sigma$ o desvio padrão calculados apenas no conjunto de treino, evitando \textit{data leakage}. Essa etapa garante que modelos sensíveis à escala, como Ridge, PLS e MLP, operem sobre dados de treino devidamente normalizados.
-\end{enumerate}
+em que $x_i$ representa o valor original da variável, $\mu$ sua média e $\sigma$ o desvio padrão calculado exclusivamente no conjunto de treino.
 
-Uma matriz de correlação foi construída usando o conjunto transformado para verificar multicolinearidade e orientar a escolha dos modelos penalizados e por componentes, como visto em \cite{Souza2025EDA}.
+\subsection{Construção do Índice de Poluição Multivariado}
+\label{subsec:indice_poluicao}
 
-\subsection{Modelos de regressão e estratégias de validação}
+Com o objetivo de representar o nível global de poluição atmosférica de forma integrada, foi construído um índice multivariado a partir das medições reais de referência dos poluentes CO, C$_6$H$_6$, NO$_x$ e NO$_2$.
+
+Inicialmente, cada poluente foi padronizado utilizando estatísticas robustas, baseadas na mediana e no intervalo interquartil (IQR), conforme:
+\begin{equation}
+x^{*}_{i} = \frac{x_i - \text{mediana}(x)}{\text{IQR}(x)},
+\end{equation}
+onde $\text{IQR}(x) = Q_3(x) - Q_1(x)$.
+
+O índice de poluição multivariado foi então definido como:
+\begin{equation}
+\text{IP} = \frac{1}{P} \sum_{j=1}^{P} x^{*}_{j},
+\end{equation}
+em que $P$ representa o número de poluentes considerados.
+
+A Fig.~\ref{fig:hist_indice_poluicao} apresenta a distribuição empírica do índice de poluição multivariado, construída a partir do conjunto de dados \textit{Air Quality}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/target_distribution.pdf}
+\caption{Distribuição do índice de poluição multivariado.}
+\label{fig:hist_indice_poluicao}
+\end{figure}
+
+Para a formulação do problema de classificação, o índice contínuo foi discretizado em classes ordinais por meio de quantis empíricos:
+\begin{equation}
+\text{Classe} =
+\begin{cases}
+C_1, & \text{IP} \leq q_{0.10} \\
+C_2, & q_{0.10} < \text{IP} \leq q_{0.30} \\
+C_3, & q_{0.30} < \text{IP} \leq q_{0.70} \\
+C_4, & q_{0.70} < \text{IP} \leq q_{0.90} \\
+C_5, & \text{IP} > q_{0.90}
+\end{cases}
+\end{equation}
+
+A Tabela~\ref{tab:distribuicao_classes} apresenta a distribuição final das classes de poluição obtidas após a discretização.
+
+\begin{table}[htbp]
+\centering
+\caption{Distribuição das classes do índice de poluição multivariado.}
+\label{tab:distribuicao_classes}
+\begin{tabular}{l r r}
+\toprule
+\textbf{Classe} & \textbf{Frequência} & \textbf{Percentual (\%)} \\
+\midrule
+C$_1$ (Muito baixo) & 695  & 10,01 \\
+C$_2$ (Baixo)       & 1\,388 & 20,00 \\
+C$_3$ (Moderado)    & 2\,776 & 39,99 \\
+C$_4$ (Alto)        & 1\,388 & 20,00 \\
+C$_5$ (Crítico)     & 694  & 10,00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Modelos de Classificação}
 \label{subsec:modelos}
+A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos de classificação em identificar corretamente os níveis de poluição a partir das variáveis preditoras. Todos os modelos foram implementados em \textit{Python} utilizando a biblioteca \textit{scikit-learn}, responsável pela padronização das variáveis, codificação do alvo, validação cruzada, treinamento e avaliação de desempenho, garantindo um protocolo experimental reprodutível e comparável entre as abordagens consideradas \cite{scikit-learn}.
 
-A modelagem foi estruturada de forma incremental — OLS, Ridge, PLS e MLP — e avaliada por duas métricas principais: RMSE e $R^{2}$. O erro quadrático médio (RMSE) quantifica a magnitude média dos resíduos e é definido por
+\subsubsection{Modelos Lineares}
+\label{subsubsec:modelos_lineares}
+
+A Regressão Logística Multiclasse foi empregada como modelo discriminativo, estimando a probabilidade condicional das classes segundo a função \textit{softmax}:
 \begin{equation}
-\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2},
+P(y=k \mid \mathbf{x}) =
+\frac{\exp(\mathbf{w}_{k}^{\top}\mathbf{x})}
+{\sum_{j=1}^{K} \exp(\mathbf{w}_{j}^{\top}\mathbf{x})},
 \end{equation}
-em que $y_i$ representa o valor observado, $\hat{y}_i$ o valor previsto pelo modelo e $n$ o número de observações. As mesmas variáveis aparecem na definição do coeficiente de determinação ($R^{2}$), que expressa a proporção da variabilidade explicada pelo modelo:
+onde $K$ representa o número de classes. O modelo foi ajustado utilizando o solver \textit{lbfgs}, adequado para problemas multiclasse, com limite máximo de 1000 iterações para assegurar convergência numérica.
+
+Adicionalmente, utilizou-se a Linear Discriminant Analysis (LDA), que assume distribuições gaussianas multivariadas com matriz de covariância compartilhada entre as classes e fronteiras de decisão lineares. O modelo foi empregado em sua formulação clássica, sem regularização adicional, seguindo as hipóteses estatísticas padrão do método.
+
+\subsubsection{Modelos Não Lineares}
+\label{subsubsec:modelos_nao_lineares}
+
+O \textit{k}-Nearest Neighbors (KNN) foi utilizado como método baseado em instâncias, classificando cada observação a partir da classe majoritária entre seus $k$ vizinhos mais próximos segundo a métrica euclidiana. O valor de $k$ foi selecionado por validação cruzada estratificada com cinco partições, considerando valores ímpares no intervalo $[1,49]$, e adotou-se ponderação dos vizinhos pelo inverso da distância.
+
+O Multi-Layer Perceptron (MLP) foi adotado como modelo não linear, composto por uma única camada oculta com 32 neurônios e função de ativação ReLU. O treinamento foi realizado por meio do otimizador Adam, com taxa de aprendizado inicial de $10^{-3}$, regularização $\ell_2$ de $10^{-4}$ e critério de parada antecipada baseado em validação interna para mitigar sobreajuste.
+
+Por fim, a Quadratic Discriminant Analysis (QDA) foi empregada como extensão do LDA, permitindo matrizes de covariância distintas por classe e resultando em fronteiras de decisão quadráticas. O modelo foi utilizado sem regularização adicional, explorando integralmente sua flexibilidade estatística.
+
+\subsection{Avaliação de Desempenho}
+\label{subsec:avaliacao}
+
+O desempenho dos modelos foi avaliado exclusivamente no conjunto de teste. A métrica principal considerada foi a acurácia global, definida como:
 \begin{equation}
-R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}.
+\text{Acurácia} = \frac{1}{N} \sum_{i=1}^{N} \mathbb{I}(\hat{y}_i = y_i),
 \end{equation}
-Ambas as métricas foram calculadas nos conjuntos de teste e em validação cruzada 10-fold, e seus resultados consolidados estão apresentados na Tabela~\ref{tab:desempenho_modelos}.
+em que $\hat{y}_i$ e $y_i$ representam, respectivamente, a classe prevista e a classe verdadeira da $i$-ésima observação.
 
+A análise foi complementada por matrizes de confusão, apresentadas na Figura~\ref{fig:confusion_placeholder}, permitindo identificar padrões de erro e confusões sistemáticas entre classes adjacentes.
 
-\subsubsection{Regressão Linear Ordinária (OLS)}
-
-
-A Regressão Linear Ordinária (OLS) foi implementada manualmente utilizando a equação normal
-\begin{equation}
-    \hat{\beta} = (X^\top X)^{-1} X^\top y,
-\end{equation}
-e seus resultados foram comparados com os obtidos pelo método \texttt{LinearRegression} da biblioteca \texttt{scikit-learn}. A Figura~\ref{fig:ols_cv_boxplot} ilustra a variabilidade do RMSE obtida por validação cruzada 10-fold.
-
-\subsubsection{Regressão Ridge (L2)}
-
-A Regressão Ridge, ou penalização L2, é definida pela função de custo:
-\begin{equation}
-    J(\beta) = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^{p} \beta_j^2,
-\end{equation}
-onde o termo de regularização, controlado pelo parâmetro $\lambda$, ajuda a mitigar problemas de multicolinearidade entre os preditores. A escolha do valor ótimo de $\lambda$ foi realizada em escala logarítmica utilizando \texttt{RidgeCV}. O desempenho do modelo em função de diferentes valores de $\lambda$ é apresentado na Figura~\ref{fig:ridge_cv_profile}, e os resultados finais, incluindo o valor selecionado de $\lambda$, estão sumarizados na Tabela~\ref{tab:resultados_ridge}.
-
-
-\subsubsection{Regressão por Componentes Parciais (PLS)}
-
-A Regressão por Componentes Parciais (PLS) busca decompor a matriz de preditores e o vetor alvo segundo:
-\begin{align}
-X &= TP^\top + E, \\
-y &= Tq + f, \\
-t &= Xw, \\
-\hat{\beta} &= W (P^\top W)^{-1} q, \\
-\hat{y} &= X \hat{\beta},
-\end{align}
-onde $T$ e $P$ representam scores e loadings de $X$, $q$ e $f$ correspondem à projeção de $y$, e $E$ é o resíduo. O número de componentes variou de 1 a 15, avaliado via validação cruzada. A Figura~\ref{fig:pls_cv_profile} mostra o comportamento do RMSE e do $R^2$ em função do número de componentes, enquanto a Figura~\ref{fig:pls_loadings} ilustra os loadings do primeiro componente.
-
-
-\subsubsection{Rede Neural do tipo MLP}
-
-A modelagem tamb\'em incluiu uma Rede Neural do tipo \textit{Multilayer Perceptron} (MLP). O modelo foi configurado com uma camada oculta contendo 64 neur\^onios, utilizando a fun\c{c}\~ao de ativa\c{c}\~ao ReLU, definida por
-\begin{equation}
-\text{ReLU}(z) = \max(0, z).
-\end{equation}
-O treinamento foi realizado com o otimizador Adam, cujas atualiza\c{c}\~oes de pesos seguem:
-\begin{align}
-m_t &= \beta_1 m_{t-1} + (1-\beta_1) g_t, \\
-v_t &= \beta_2 v_{t-1} + (1-\beta_2) g_t^2, \\
-\hat{m}_t &= \frac{m_t}{1-\beta_1^t}, \\
-\hat{v}_t &= \frac{v_t}{1-\beta_2^t}, \\
-\theta_t &= \theta_{t-1} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}.
-\end{align}
-Para evitar sobreajuste, utilizou-se \textit{early stopping}, interrompendo o treinamento quando a perda de valida\c{c}\~ao deixou de apresentar melhora. Os resultados quantitativos est\~ao apresentados na Tabela~\ref{tab:resultados_mlp}, enquanto a dispers\~ao Real~$\times$~Previsto encontra-se na respectiva figura.
-
-
-\subsection{Métricas de desempenho e importância de variáveis}
-\label{subsec:metrics}
-
-A Tabela~\ref{tab:desempenho_modelos} apresenta RMSE e $R^2$ médios em validação cruzada e em teste para todos os modelos. A importância relativa das variáveis é discutida a partir dos coeficientes padronizados do modelo Ridge e dos loadings do primeiro componente PLS.
-
-O conjunto de análises descrito estabelece um pipeline robusto, relacionando a qualidade do pré-processamento, a justificativa de seleção dos modelos e o protocolo de validação empregado. Todas as figuras e tabelas citadas têm função metodológica clara e serão analisadas criticamente nos Resultados.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/confusion_placeholder.png}
+\caption{Exemplo de matriz de confusão para um dos modelos avaliados.}
+\label{fig:confusion_placeholder}
+\end{figure}
