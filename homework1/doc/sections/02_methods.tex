@@ -1,41 +1,64 @@
 \section{Metodologia}
 \label{sec:metodologia}
 
-A análise do dataset Air Quality UCI seguiu um pipeline metodológico implementado em Python com as bibliotecas Pandas, NumPy, Matplotlib e Seaborn. As etapas principais incluíram a descrição e pré-processamento dos dados, análise exploratória univariada e condicional com engenharia de atributos, análise multivariada de correlações e, finalmente, a implementação manual da Análise de Componentes Principais (PCA) para redução de dimensionalidade.
+\subsection{Conjunto de dados, recorte e limpeza}
+\label{subsec:dataset_limpeza}
 
-\subsection{Descrição e Preparação do Conjunto de Dados}
-\label{subsec:dataset_prep}
+Utilizou-se o conjunto \textit{Air Quality} (UCI), composto por medições horárias de uma matriz de sensores químicos MOx, variáveis meteorológicas e concentrações de referência (\textit{ground truth}) para poluentes em cenário urbano ao nível da rua. O período monitorado (março/2004 a fevereiro/2005), bem como a presença de deriva e \textit{cross-sensitivities} nos sensores em operação de campo, seguem a caracterização reportada por \citeonline{devito2008}. O arquivo foi importado considerando separador ``;'' e vírgula como separador decimal; o código de ausências foi tratado como valor faltante. Em seguida, removeram-se colunas vazias e excluiu-se \texttt{NMHC(GT)} devido à elevada incompletude. Para evitar imputações ad hoc, adotou-se descarte por caso completo apenas nas variáveis estritamente necessárias a cada etapa: (i) na construção do índice composto, removeu-se qualquer registro com ausência nos poluentes selecionados; (ii) nas análises condicionais temporais, removeu-se qualquer registro com ausência em \texttt{Date} e \texttt{Time}. A Tabela~\ref{tab:desc_stats} consolida estatísticas descritivas (média, dispersão, quartis e extremos) usadas exclusivamente para orientar decisões de pré-processamento; a Figura~\ref{fig:eda_temporal_behavior} e a Figura~\ref{fig:eda_boxplots_outliers} registram, respectivamente, o comportamento temporal do poluente de referência e a distribuição normalizada dos preditores para inspeção de escala e valores extremos.
 
-Utilizou-se o dataset "Air Quality UCI" \cite{devito2008}, contendo \textbf{N = 9358} observações horárias e \textbf{D = 15} variáveis (5 sensores MOx, 5 medições de referência GT, 3 variáveis climáticas, Data e Hora), coletadas entre 2004 e 2005.
+\subsection{Índice composto de poluição e discretização em classes}
+\label{subsec:indice_classe}
 
-O pré-processamento iniciou-se com a leitura dos dados, especificando os separadores corretos e tratando o valor \texttt{-200} como ausente (\texttt{NaN}). As colunas \texttt{Date} e \texttt{Time} foram combinadas num índice \texttt{datetime}, estruturando os dados como uma série temporal. A variável \texttt{NMHC(GT)}, com mais de 90\% de dados ausentes, foi considerada não confiável e excluída das análises subsequentes. Para a análise multivariada e PCA, linhas com valores ausentes nos quatro poluentes de referência restantes (\texttt{CO(GT)}, \texttt{NOx(GT)}, \texttt{NO2(GT)}, \texttt{C6H6(GT)}) foram removidas, resultando num conjunto de dados final de \textbf{N = 6941} observações. Linhas duplicadas foram também removidas. O conjunto de dados foi então dividido em \textbf{8 Preditores} (sensores e clima) e \textbf{4 Alvos} (poluentes GT).
+Definiu-se um índice composto de poluição (\textit{PollutionIndex}) a partir dos poluentes de referência \(\mathcal{P}=\{\text{CO(GT)},\text{C6H6(GT)},\text{NOx(GT)},\text{NO2(GT)}\}\). Para reduzir sensibilidade a caudas longas e valores extremos, aplicou-se uma normalização robusta por mediana e amplitude interquartil (IQR), por poluente \(p\in\mathcal{P}\):
+\begin{equation}
+x^{(p)}_{\mathrm{rob}}(t)=\frac{x^{(p)}(t)-\mathrm{med}\!\left(x^{(p)}\right)}{\mathrm{IQR}\!\left(x^{(p)}\right)},
+\qquad
+\mathrm{IQR}\!\left(x^{(p)}\right)=Q_{0.75}\!\left(x^{(p)}\right)-Q_{0.25}\!\left(x^{(p)}\right).
+\label{eq:robust_norm}
+\end{equation}
+O índice composto foi então definido como a média simples das componentes robustamente normalizadas:
+\begin{equation}
+\mathrm{PollutionIndex}(t)=\frac{1}{|\mathcal{P}|}\sum_{p\in\mathcal{P}}x^{(p)}_{\mathrm{rob}}(t).
+\label{eq:pollution_index}
+\end{equation}
 
-\subsection{Análise Exploratória (EDA) e Engenharia de Atributos}
-\label{subsec:eda_feature_eng}
+O alvo categórico \(\,y(t)\,\) foi obtido por discretização do \(\mathrm{PollutionIndex}(t)\) em cinco classes ordenadas e aproximadamente balanceadas por quantis. Seja \(\{q_{0.10},q_{0.30},q_{0.70},q_{0.90}\}\) o conjunto de pontos de corte obtidos na amostra; definiram-se os intervalos:
+\begin{equation}
+(-\infty,q_{0.10}],\ (q_{0.10},q_{0.30}],\ (q_{0.30},q_{0.70}],\ (q_{0.70},q_{0.90}],\ (q_{0.90},+\infty),
+\label{eq:quantile_bins}
+\end{equation}
+mapeados, respectivamente, para \{\textit{Muito baixo}, \textit{Baixo}, \textit{Moderado}, \textit{Alto}, \textit{Crítico}\}. A Figura~\ref{fig:target_distribution} documenta a distribuição amostral das classes resultantes. Para análise descritiva estritamente metodológica (sem inferência de resultados), foram produzidas tabelas e gráficos de composição percentual por turno (Figura~\ref{fig:pollution_level_by_turno}) e por dia da semana (Figura~\ref{fig:pollution_level_by_weekday}), além de uma inspeção multivariada por pares para avaliar separabilidade geométrica no espaço dos poluentes.
 
-A EDA visou caracterizar as distribuições das variáveis e identificar padrões. Foram calculadas estatísticas descritivas (média, desvio padrão, assimetria, quartis) e geradas visualizações (Histogramas, Box Plots, Violin Plots, Séries Temporais) para cada variável numérica.
+\subsection{Matriz de preditores, particionamento e padronização}
+\label{subsec:split_scaling}
 
-Para habilitar a análise condicional e temporal, foram criadas novas variáveis:
-\begin{itemize}
-    \item \textbf{Características Temporais:} Extração de \texttt{month}, \texttt{weekday} e \texttt{day\_period} a partir do índice \texttt{datetime}.
-    \item \textbf{Índice de Poluição Composto (CPI):} Os quatro poluentes GT selecionados foram padronizados via Z-score para normalizar suas escalas. O CPI (\texttt{pollution\_index}) foi calculado como a média destes Z-scores por observação.
-    \item \textbf{Classes de Poluição (L=3):} O CPI foi discretizado em três classes de igual frequência (\texttt{Low}, \texttt{Moderate}, \texttt{High}), resultando numa \textbf{distribuição de classes} balanceada (\textbf{L=3}).
-\end{itemize}
-Subsequentemente, a análise univariada foi repetida de forma condicional, agrupando os dados pela \texttt{pollution\_class} e pelas características temporais para investigar variações nos padrões.
+A matriz de preditores \(X\) foi composta pelas respostas dos sensores MOx e variáveis meteorológicas, excluindo-se: (i) o índice composto e sua classe; (ii) os poluentes de referência (para impedir vazamento do rótulo construído a partir deles); e (iii) variáveis de data/hora e derivadas temporais. O particionamento foi realizado em treino e teste com proporção \(70/30\), estratificado por classe e com semente fixa para reprodutibilidade.
 
-\subsection{Análise Multivariada e Correlação}
-\label{subsec:multivariate_corr}
+A padronização dos preditores foi aplicada com parâmetros estimados apenas no treino e transferidos ao teste. Para cada atributo \(j\), com média \(\mu_j\) e desvio padrão \(\sigma_j\) no conjunto de treino, definiu-se:
+\begin{equation}
+z_{ij}=\frac{x_{ij}-\mu_j}{\sigma_j}.
+\label{eq:zscore}
+\end{equation}
+Quando aplicável, empregou-se transformação logarítmica \(\log(1+x)\) em atributos com assimetria elevada, como etapa anterior à padronização, preservando a regra de ajuste apenas no treino.
 
-Para investigar as relações entre os 8 preditores, foi realizada uma análise multivariada. A correlação linear de Pearson entre todos os pares de preditores foi calculada e visualizada como um \textit{heatmap}, destacando a forte multicolinearidade entre os sensores. Gráficos de pares, coloridos pelas classes de poluição e temporais, foram gerados para inspecionar visualmente a separabilidade das classes e as relações bivariadas.
+\subsection{Classificadores lineares e não lineares}
+\label{subsec:modelos}
 
-\subsection{Análise de Componentes Principais (PCA) - Implementação Manual}
-\label{subsec:pca_manual}
+A avaliação comparativa foi conduzida com dois grupos de classificadores: lineares (Regressão Logística Multiclasse e LDA) e não lineares (KNN, MLP e QDA). A codificação do alvo foi realizada por mapeamento inteiro para modelos probabilísticos e por \textit{one-hot encoding} quando requerido em otimização de redes neurais.
 
-Conforme requerido, o PCA foi implementado manualmente para reduzir a dimensionalidade dos 8 preditores e identificar as principais fontes de variação. Os passos foram:
-\begin{enumerate}
-    \item \textbf{Padronização:} Os 8 preditores foram padronizados (média 0, desvio padrão 1) usando Z-score.
-    \item \textbf{Matriz de Covariância:} Calculada a partir dos dados padronizados.
-    \item \textbf{Decomposição Espectral:} Cálculo dos autovalores e autovetores da matriz de covariância.
-    \item \textbf{Seleção e Projeção:} Os autovalores/autovetores foram ordenados. A variância explicada por cada componente foi calculada e visualizada num Scree Plot. Os dados padronizados foram então projetados nos dois primeiros componentes principais (PC1 e PC2) através de multiplicação de matrizes.
-    \item \textbf{Visualização:} O resultado 2D foi visualizado num gráfico de dispersão (PC1 vs PC2), colorido pelas classes. Um Biplot e um Círculo de Correlação foram gerados para interpretar a contribuição das variáveis originais aos componentes.
-\end{enumerate}
+Na Regressão Logística multiclasse, modelou-se \(P(y=k\mid x)\) via função \textit{softmax}:
+\begin{equation}
+P(y=k\mid x)=\frac{\exp\left(w_k^\top x+b_k\right)}{\sum_{\ell=1}^{K}\exp\left(w_\ell^\top x+b_\ell\right)}.
+\label{eq:softmax}
+\end{equation}
+O LDA foi incluído como discriminante linear sob hipótese de covariância comum entre classes, enquanto o QDA generalizou a fronteira ao permitir covariâncias específicas por classe. O KNN foi ajustado com ponderação por distância e escolha de \(k\) por validação cruzada estratificada (\(5\)-fold), documentada no gráfico de seleção (Figura~\ref{fig:knn_elbow_plot}). O MLP foi configurado com uma camada oculta e ativação ReLU:
+\begin{equation}
+\mathrm{ReLU}(u)=\max(0,u),
+\label{eq:relu}
+\end{equation}
+com treinamento por otimizador adaptativo e interrupção antecipada baseada em subconjunto de validação.
+
+\subsection{Protocolo de validação e artefatos experimentais}
+\label{subsec:validacao}
+
+O desempenho foi mensurado por acurácia e por matrizes de confusão, reportadas como figuras específicas por modelo (Figuras correspondentes às matrizes), e por uma tabela comparativa consolidada (Tabela~\ref{tab:model_comparison}). As estatísticas descritivas, gráficos temporais e gráficos de distribuição foram tratados como insumos de documentação metodológica e rastreabilidade do pipeline (Figuras~\ref{fig:eda_temporal_behavior}--\ref{fig:pollution_level_by_weekday}), sem antecipação de interpretações inferenciais na seção de Metodologia. Todo o fluxo (limpeza, construção do índice, discretização, particionamento, padronização e ajuste) foi executado de forma determinística sob semente fixa, assegurando reprodutibilidade.
