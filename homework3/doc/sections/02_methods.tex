@@ -107,8 +107,7 @@ C$_5$ (Crítico)     & 694  & 10,00 \\
 \end{table}
 \subsection{Modelos de Classificação}
 \label{subsec:modelos}
-
-A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos em classificar corretamente os níveis de poluição a partir das variáveis preditoras, compostas pelas respostas dos sensores MOx e pelas variáveis ambientais. Todos os modelos foram treinados sobre dados previamente padronizados por meio de normalização \textit{z-score}, utilizando os mesmos conjuntos de treino e teste, a fim de garantir comparabilidade direta de desempenho.
+A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos de classificação em identificar corretamente os níveis de poluição a partir das variáveis preditoras. Todos os modelos foram implementados em \textit{Python} utilizando a biblioteca \textit{scikit-learn}, responsável pela padronização das variáveis, codificação do alvo, validação cruzada, treinamento e avaliação de desempenho, garantindo um protocolo experimental reprodutível e comparável entre as abordagens consideradas \cite{scikit-learn}.
 
 \subsubsection{Modelos Lineares}
 \label{subsubsec:modelos_lineares}
