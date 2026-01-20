@@ -4,7 +4,7 @@
 \subsection{Conjunto de dados e variáveis}
 \label{subsec:dataset}
 
-Utiliza-se o conjunto de dados \textit{Air Quality} do repositório UCI, composto por medições horárias realizadas entre março de 2004 e abril de 2005 em um ambiente urbano ao nível da rua, caracterizado por elevada poluição atmosférica. O conjunto integra medições de referência de poluentes, respostas de uma matriz de sensores químicos de óxido metálico (MOx) e variáveis meteorológicas \cite{airqualityuci2008}.
+Utiliza-se o conjunto de dados \textit{Air Quality} do repositório UCI \textit{Machine Learning Repository}\cite{airqualityuci2008}, composto por medições horárias realizadas entre março de 2004 e abril de 2005 em um ambiente urbano ao nível da rua, caracterizado por elevada poluição atmosférica. O conjunto integra medições de referência de poluentes, respostas de uma matriz de sensores químicos de óxido metálico (MOx) e variáveis meteorológicas .
 
 As variáveis foram organizadas em três grupos conforme sua natureza: (i) medições reais de referência (\textit{ground truth}), utilizadas como variáveis-alvo e de validação; (ii) respostas de sensores MOx, expressas em unidades arbitrárias (u.a.), que representam sinais elétricos internos dos sensores e não correspondem diretamente a concentrações físicas de poluentes; e (iii) variáveis ambientais, empregadas como preditores auxiliares. A Tabela~\ref{tab:stats-air-quality} apresenta estatísticas descritivas resumidas para cada variável, evidenciando diferenças de escala e de completude entre os grupos.
 
@@ -43,7 +43,7 @@ AH (g\,m$^{-3}$)     & 8\,991 & 5,07 & 0,18 & 1,03 & 2,23 \\
 
 O pré-processamento teve como objetivo garantir consistência estatística e viabilizar a aplicação dos algoritmos de classificação. Os dados foram carregados respeitando o separador e a codificação decimal originais, e os valores ausentes identificados pelo código \texttt{-200} foram convertidos para valores nulos. Colunas sem informação relevante e registros incompletos foram removidos. A variável \texttt{NMHC(GT)} foi excluída devido à elevada proporção de valores ausentes (superior a 90\%), o que comprometeria a robustez das análises. Em seguida, o conjunto de dados foi particionado de forma estratificada em conjuntos de treino (70\%) e teste (30\%), preservando a distribuição das classes do índice de poluição.
 
-As variáveis preditoras foram normalizadas por meio da padronização \textit{z-score}, definida por:
+As variáveis preditoras foram normalizadas por meio da padronização z-score, a fim de reduzir o efeito de diferentes escalas e unidades entre os atributos, garantindo que nenhum deles exerça influência desproporcional no modelo. Essa transformação contribui para maior estabilidade numérica e melhor desempenho dos algoritmos de classificação, sendo definida por:
 \begin{equation}
 z_i = \frac{x_i - \mu}{\sigma},
 \end{equation}
@@ -89,7 +89,7 @@ C_5, & \text{IP} > q_{0.90}
 
 A Tabela~\ref{tab:caracterizacao} apresenta a distribuição percentual das classes obtidas após a discretização do índice. A divisão balanceada decorre diretamente da definição dos quantis e estabelece um cenário experimental adequado para a avaliação comparativa de classificadores multiclasse.
 
-\begin{table}[t]
+\begin{table}[htb!]
   \centering
   \caption{Distribuição percentual das classes de poluição no conjunto de dados.}
   \label{tab:caracterizacao}
@@ -121,16 +121,15 @@ P(y=k \mid \mathbf{x}) =
 \end{equation}
 onde $K$ representa o número de classes. O modelo foi ajustado utilizando o solver \textit{lbfgs}, adequado para problemas multiclasse, com limite máximo de 1000 iterações para assegurar convergência numérica.
 
-Adicionalmente, utilizou-se a Linear Discriminant Analysis (LDA), que assume distribuições gaussianas multivariadas com matriz de covariância compartilhada entre as classes e fronteiras de decisão lineares. O modelo foi empregado em sua formulação clássica, sem regularização adicional, seguindo as hipóteses estatísticas padrão do método.
+Adicionalmente, utilizou-se a \textit{Linear Discriminant Analysis} (LDA), que assume distribuições gaussianas multivariadas com matriz de covariância compartilhada entre as classes e fronteiras de decisão lineares. O método projeta os dados em um subespaço que maximiza a separação entre as classes e minimiza a variância intra-classe, resultando em uma função discriminante linear. O modelo foi empregado em sua formulação clássica, sem regularização adicional, seguindo as hipóteses estatísticas padrão do método.
 
 \subsubsection{Modelos Não Lineares}
 \label{subsubsec:modelos_nao_lineares}
 
 O \textit{k}-Nearest Neighbors (KNN) foi utilizado como método baseado em instâncias, classificando cada observação a partir da classe majoritária entre seus $k$ vizinhos mais próximos segundo a métrica euclidiana. O valor de $k$ foi selecionado por validação cruzada estratificada com cinco partições, considerando valores ímpares no intervalo $[1,49]$, e adotou-se ponderação dos vizinhos pelo inverso da distância.
 
-O Multi-Layer Perceptron (MLP) foi adotado como modelo não linear, composto por uma única camada oculta com 32 neurônios e função de ativação ReLU. O treinamento foi realizado por meio do otimizador Adam, com taxa de aprendizado inicial de $10^{-3}$, regularização $\ell_2$ de $10^{-4}$ e critério de parada antecipada baseado em validação interna para mitigar sobreajuste.
 
-Por fim, a Quadratic Discriminant Analysis (QDA) foi empregada como extensão do LDA, permitindo matrizes de covariância distintas por classe e resultando em fronteiras de decisão quadráticas. O modelo foi utilizado sem regularização adicional, explorando integralmente sua flexibilidade estatística.
+Por fim, a \textit{Quadratic Discriminant Analysis} (QDA) foi empregada como extensão do LDA, permitindo matrizes de covariância distintas por classe e resultando em fronteiras de decisão quadráticas. Essa maior flexibilidade possibilita capturar relações mais complexas entre as variáveis preditoras quando comparada ao LDA. O modelo foi utilizado sem regularização adicional, explorando integralmente sua flexibilidade estatística.
 
 \subsection{Avaliação de Desempenho}
 \label{subsec:avaliacao}
