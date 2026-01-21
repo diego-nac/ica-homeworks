@@ -3,6 +3,63 @@
 
 Nesta seção, são apresentados os resultados obtidos na avaliação dos modelos de classificação aplicados ao índice multivariado de poluição do ar. A análise contempla tanto o desempenho global dos classificadores quanto sua performance específica por classe, permitindo uma avaliação comparativa detalhada das abordagens consideradas.
 
+\subsection{Análise estatística descritiva}
+\label{subsec:estatistica_descritiva}
+
+A Tabela~\ref{tab:stats-air-quality} apresenta as estatísticas descritivas das variáveis consideradas no estudo. Observa-se elevada variabilidade nas concentrações dos poluentes de referência, especialmente para NO$_x$ e NO$_2$, bem como a presença de valores ausentes em proporções relevantes, sobretudo para a variável NMHC(GT).
+
+As respostas dos sensores MOx exibem amplitudes elevadas e distribuições assimétricas, refletindo sua natureza elétrica e não calibrada em unidades físicas. As variáveis ambientais apresentam faixas compatíveis com condições urbanas típicas, atuando como preditores auxiliares no processo de classificação. Essa heterogeneidade reforça a necessidade de abordagens multivariadas e justifica a construção de um índice composto como estratégia de redução de dimensionalidade e síntese informacional.
+\begin{table}[htbp]
+\centering
+\caption{Estatísticas descritivas do conjunto de dados \textit{Air Quality}.}
+\label{tab:stats-air-quality}
+\resizebox{0.5\textwidth}{!}{
+\begin{tabular}{l r r r r r}
+\toprule
+\textbf{Variável} & \textbf{N} & \textbf{Vazios (\%)} & \textbf{Min.} & \textbf{Média} & \textbf{Máx.} \\
+\midrule
+\multicolumn{6}{l}{\textbf{Medições reais}} \\
+CO (mg\,m$^{-3}$)        & 7\,674 & 18,97 & 0,10 & 2,15 & 11,90 \\
+C$_6$H$_6$ ($\mu$g\,m$^{-3}$) & 8\,991 & 5,07  & 0,10 & 10,08 & 63,70 \\
+NO$_x$ (ppb)             & 7\,718 & 18,51 & 2,00 & 246,90 & 1\,479,00 \\
+NO$_2$ ($\mu$g\,m$^{-3}$)& 7\,715 & 18,54 & 2,00 & 113,09 & 340,00 \\
+\textbf{NMHC ($\mu$g\,m$^{-3}$)} & \textbf{914} & \textbf{90,35} & 7,00 & 218,81 & 1\,189,00 \\
+\midrule
+\multicolumn{6}{l}{\textbf{Sensores MOx (u.a.)}} \\
+PT08.S1 (CO)   & 8\,991 & 5,07 & 647,00 & 1\,099,83 & 2\,040,00 \\
+PT08.S2 (NMHC) & 8\,991 & 5,07 & 383,00 & 939,15 & 2\,214,00 \\
+PT08.S3 (NO$_x$)& 8\,991 & 5,07 & 322,00 & 835,49 & 2\,683,00 \\
+PT08.S4 (NO$_2$)& 8\,991 & 5,07 & 551,00 & 1\,456,26 & 2\,775,00 \\
+PT08.S5 (O$_3$) & 8\,991 & 5,07 & 221,00 & 1\,022,91 & 2\,523,00 \\
+\midrule
+\multicolumn{6}{l}{\textbf{Variáveis ambientais}} \\
+T ($^\circ$C)  & 8\,991 & 5,07 & -1,90 & 18,32 & 44,60 \\
+RH (\%)        & 8\,991 & 5,07 & 9,20 & 49,23 & 88,70 \\
+AH (g\,m$^{-3}$) & 8\,991 & 5,07 & 0,18 & 1,03 & 2,23 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+
+
+\subsection{Comportamento temporal do índice de poluição}
+\label{subsec:temporal_index}
+
+A Figura~\ref{fig:eda_temporal_behavior} ilustra a evolução temporal mensal do índice de poluição multivariado ao longo do período analisado. Essa visualização permite verificar a coerência temporal do índice construído e sua capacidade de sintetizar a variabilidade conjunta dos poluentes considerados, sem introduzir instabilidades decorrentes do processo de agregação.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figures/eda_temporal_behavior_monthly.pdf}
+\caption{Série temporal mensal do índice composto de poluição.}
+\label{fig:eda_temporal_behavior}
+\end{figure}
+
+Observa-se um comportamento temporal coerente, com variações suaves e ausência de descontinuidades artificiais, sugerindo que o procedimento de normalização robusta e agregação preservou a dinâmica conjunta dos poluentes de referência. Além disso, a visualização evidencia flutuações ao longo do tempo compatíveis com a variabilidade esperada em séries ambientais urbanas, reforçando a adequação do índice como variável-alvo para a etapa de discretização ordinal e posterior modelagem supervisionada.
+
+\subsection{Desempenho dos modelos por classe}
+\label{subsec:performance_classes}
+
 A Tabela~\ref{tab:performance_nivel} apresenta os valores de acurácia e F1-score por classe do índice de poluição no conjunto de teste. Observa-se, de forma consistente entre os modelos avaliados, melhor desempenho na classe \textit{Moderado}, a qual concentra a maior parcela das observações e apresenta padrões mais estáveis no espaço de atributos.
 
 Nas classes extremas (\textit{Muito baixo} e \textit{Crítico}), os valores das métricas exibem maior variabilidade entre os modelos. Esse comportamento indica maior dificuldade de separação nessas regiões do índice, que correspondem aos quantis inferiores e superiores da distribuição e estão mais sujeitas a sobreposição no espaço das variáveis preditoras.
@@ -34,10 +91,12 @@ Crítico & F1  & 0.846 & 0.850 & 0.836 & \textbf{0.872} & 0.837 \\
 \end{tabular}
 \end{table}
 
+\subsection{Análise da matriz de confusão}
+\label{subsec:confusao}
 
-A Figura~\ref{fig:mlp_confusion_matrix} apresenta a matriz de confusão do modelo MLP no conjunto de teste. Observa-se que a maioria dos erros de classificação ocorre entre classes adjacentes do índice de poluição, comportamento coerente com a natureza ordinal das classes definidas.
+A Figura~\ref{fig:mlp_confusion_matrix} apresenta a matriz de confusão do modelo MLP no conjunto de teste. Observa-se que a maioria dos erros de classificação ocorre entre classes adjacentes, comportamento esperado dada a natureza ordinal do problema.
 
-Não se verificam confusões relevantes entre classes extremas, o que indica que o modelo preserva a ordenação semântica implícita no problema de classificação.
+Não são observadas confusões relevantes entre classes extremas, indicando que o modelo preserva a ordenação semântica implícita no índice de poluição. Esse resultado reforça a adequação do MLP para a tarefa proposta, especialmente em cenários onde erros grosseiros de classificação seriam mais críticos do ponto de vista operacional.
 
 \begin{figure}[h]
 \centering

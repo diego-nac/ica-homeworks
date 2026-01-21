@@ -4,50 +4,69 @@
 \subsection{Conjunto de dados e variáveis}
 \label{subsec:dataset}
 
-Utiliza-se o conjunto de dados \textit{Air Quality} do repositório UCI \textit{Machine Learning Repository}\cite{airqualityuci2008}, composto por medições horárias realizadas entre março de 2004 e abril de 2005 em um ambiente urbano ao nível da rua, caracterizado por elevada poluição atmosférica. O conjunto integra medições de referência de poluentes, respostas de uma matriz de sensores químicos de óxido metálico (MOx) e variáveis meteorológicas .
+Utiliza-se o conjunto de dados \textit{Air Quality} do repositório UCI \textit{Machine Learning Repository} \cite{airqualityuci2008}, composto por medições horárias realizadas entre março de 2004 e abril de 2005 em um ambiente urbano ao nível da rua. O conjunto integra medições de referência de poluentes, respostas de uma matriz de sensores químicos de óxido metálico (MOx) e variáveis meteorológicas.
 
-As variáveis foram organizadas em três grupos conforme sua natureza: (i) medições reais de referência (\textit{ground truth}), utilizadas como variáveis-alvo e de validação; (ii) respostas de sensores MOx, expressas em unidades arbitrárias (u.a.), que representam sinais elétricos internos dos sensores e não correspondem diretamente a concentrações físicas de poluentes; e (iii) variáveis ambientais, empregadas como preditores auxiliares. A Tabela~\ref{tab:stats-air-quality} apresenta estatísticas descritivas resumidas para cada variável, evidenciando diferenças de escala e de completude entre os grupos.
-
+As variáveis do conjunto de dados foram agrupadas conforme sua natureza e papel no estudo. A Tabela~\ref{tab:dataset-simple} apresenta uma visão sintética das variáveis utilizadas.
 \begin{table}[htbp]
 \centering
-\caption{Estatísticas descritivas do conjunto de dados \textit{Air Quality}.}
-\label{tab:stats-air-quality}
-\begin{tabular}{l r r r r r}
+\caption{Resumo das variáveis do conjunto de dados \textit{Air Quality}.}
+\label{tab:dataset-simple}
+\begin{tabular}{l l l}
 \toprule
-\textbf{Variável (unidade)} & \textbf{N} & \textbf{Vazios (\%)} & \textbf{Mín.} & \textbf{Média} & \textbf{Máx.} \\
+\textbf{Grupo} & \textbf{Variáveis} & \textbf{Uso no estudo} \\
 \midrule
-\multicolumn{6}{l}{\textbf{Medições reais}} \\
-CO(GT) (mg\,m$^{-3}$)            & 7\,674 & 18,97 & 0,10 & 2,15 & 11,90 \\
-C$_6$H$_6$(GT) ($\mu$g\,m$^{-3}$) & 8\,991 & 5,07  & 0,10 & 10,08 & 63,70 \\
-NO$_x$(GT) (ppb)                 & 7\,718 & 18,51 & 2,00 & 246,90 & 1\,479,00 \\
-NO$_2$(GT) ($\mu$g\,m$^{-3}$)    & 7\,715 & 18,54 & 2,00 & 113,09 & 340,00 \\
-\textbf{NMHC(GT) ($\mu$g\,m$^{-3}$)} & \textbf{914} & \textbf{90,35} & 7,00 & 218,81 & 1\,189,00 \\
-\midrule
-\multicolumn{6}{l}{\textbf{Sensores MOx (resposta elétrica, u.a.)}} \\
-PT08.S1(CO) (u.a.)   & 8\,991 & 5,07 & 647,00 & 1\,099,83 & 2\,040,00 \\
-PT08.S2(NMHC) (u.a.) & 8\,991 & 5,07 & 383,00 & 939,15 & 2\,214,00 \\
-PT08.S3(NOx) (u.a.)  & 8\,991 & 5,07 & 322,00 & 835,49 & 2\,683,00 \\
-PT08.S4(NO$_2$) (u.a.) & 8\,991 & 5,07 & 551,00 & 1\,456,26 & 2\,775,00 \\
-PT08.S5(O$_3$) (u.a.)  & 8\,991 & 5,07 & 221,00 & 1\,022,91 & 2\,523,00 \\
-\midrule
-\multicolumn{6}{l}{\textbf{Variáveis ambientais}} \\
-T ($^\circ$C)        & 8\,991 & 5,07 & -1,90 & 18,32 & 44,60 \\
-RH (\%)              & 8\,991 & 5,07 & 9,20 & 49,23 & 88,70 \\
-AH (g\,m$^{-3}$)     & 8\,991 & 5,07 & 0,18 & 1,03 & 2,23 \\
+Poluentes & CO, C$_6$H$_6$, NO$_x$, NO$_2$ & Índice de poluição \\
+Sensores MOx & PT08.S1 -- PT08.S5 & Preditores \\
+Ambientais & T, RH, AH & Preditores \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+
+
+% \begin{table}[htbp]
+% \centering
+% \caption{Estatísticas descritivas do conjunto de dados \textit{Air Quality}.}
+% \label{tab:stats-air-quality}
+% \begin{tabular}{l r r r r r}
+% \toprule
+% \textbf{Variável (unidade)} & \textbf{N} & \textbf{Vazios (\%)} & \textbf{Mín.} & \textbf{Média} & \textbf{Máx.} \\
+% \midrule
+% \multicolumn{6}{l}{\textbf{Medições reais}} \\
+% CO(GT) (mg\,m$^{-3}$)            & 7\,674 & 18,97 & 0,10 & 2,15 & 11,90 \\
+% C$_6$H$_6$(GT) ($\mu$g\,m$^{-3}$) & 8\,991 & 5,07  & 0,10 & 10,08 & 63,70 \\
+% NO$_x$(GT) (ppb)                 & 7\,718 & 18,51 & 2,00 & 246,90 & 1\,479,00 \\
+% NO$_2$(GT) ($\mu$g\,m$^{-3}$)    & 7\,715 & 18,54 & 2,00 & 113,09 & 340,00 \\
+% \textbf{NMHC(GT) ($\mu$g\,m$^{-3}$)} & \textbf{914} & \textbf{90,35} & 7,00 & 218,81 & 1\,189,00 \\
+% \midrule
+% \multicolumn{6}{l}{\textbf{Sensores MOx (resposta elétrica, u.a.)}} \\
+% PT08.S1(CO) (u.a.)   & 8\,991 & 5,07 & 647,00 & 1\,099,83 & 2\,040,00 \\
+% PT08.S2(NMHC) (u.a.) & 8\,991 & 5,07 & 383,00 & 939,15 & 2\,214,00 \\
+% PT08.S3(NOx) (u.a.)  & 8\,991 & 5,07 & 322,00 & 835,49 & 2\,683,00 \\
+% PT08.S4(NO$_2$) (u.a.) & 8\,991 & 5,07 & 551,00 & 1\,456,26 & 2\,775,00 \\
+% PT08.S5(O$_3$) (u.a.)  & 8\,991 & 5,07 & 221,00 & 1\,022,91 & 2\,523,00 \\
+% \midrule
+% \multicolumn{6}{l}{\textbf{Variáveis ambientais}} \\
+% T ($^\circ$C)        & 8\,991 & 5,07 & -1,90 & 18,32 & 44,60 \\
+% RH (\%)              & 8\,991 & 5,07 & 9,20 & 49,23 & 88,70 \\
+% AH (g\,m$^{-3}$)     & 8\,991 & 5,07 & 0,18 & 1,03 & 2,23 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
 \subsection{Pré-processamento dos Dados}
 \label{subsec:preprocessamento}
 
-O pré-processamento teve como objetivo garantir consistência estatística e viabilizar a aplicação dos algoritmos de classificação. Os dados foram carregados respeitando o separador e a codificação decimal originais, e os valores ausentes identificados pelo código \texttt{-200} foram convertidos para valores nulos. Colunas sem informação relevante e registros incompletos foram removidos. A variável \texttt{NMHC(GT)} foi excluída devido à elevada proporção de valores ausentes (superior a 90\%), o que comprometeria a robustez das análises. Em seguida, o conjunto de dados foi particionado de forma estratificada em conjuntos de treino (70\%) e teste (30\%), preservando a distribuição das classes do índice de poluição.
+O pré-processamento teve como objetivo viabilizar a aplicação dos algoritmos de classificação e assegurar consistência estatística dos dados. Os dados foram carregados respeitando o separador e a codificação decimal originais, e os valores ausentes identificados pelo código \texttt{-200} foram convertidos para valores nulos. Colunas sem informação relevante e registros incompletos foram removidos.
 
-As variáveis preditoras foram normalizadas por meio da padronização z-score, a fim de reduzir o efeito de diferentes escalas e unidades entre os atributos, garantindo que nenhum deles exerça influência desproporcional no modelo. Essa transformação contribui para maior estabilidade numérica e melhor desempenho dos algoritmos de classificação, sendo definida por:
+A variável \texttt{NMHC(GT)} foi excluída devido à elevada proporção de valores ausentes (superior a 90\%). Em seguida, o conjunto de dados foi particionado de forma estratificada em conjuntos de treino (70\%) e teste (30\%), preservando a distribuição das classes do índice de poluição.
+
+As variáveis preditoras foram normalizadas por meio da padronização \textit{z-score}, definida por:
 \begin{equation}
 z_i = \frac{x_i - \mu}{\sigma},
 \end{equation}
-em que $x_i$ representa o valor original da variável, $\mu$ sua média e $\sigma$ o desvio padrão calculado exclusivamente no conjunto de treino.
+em que $x_i$ representa o valor original da variável, $\mu$ a média e $\sigma$ o desvio padrão, calculados exclusivamente no conjunto de treino.
 
 \subsection{Construção do Índice de Poluição Multivariado}
 \label{subsec:indice_poluicao}
@@ -66,16 +85,15 @@ O índice de poluição multivariado foi então definido como:
 \end{equation}
 em que $P$ representa o número de poluentes considerados.
 
-A Figura~\ref{fig:eda_temporal_behavior} ilustra a evolução temporal mensal do índice de poluição multivariado ao longo do período analisado. Essa visualização permite verificar a coerência temporal do índice construído e sua capacidade de sintetizar a variabilidade conjunta dos poluentes considerados, sem introduzir instabilidades decorrentes do processo de agregação.
+% A Figura~\ref{fig:eda_temporal_behavior} ilustra a evolução temporal mensal do índice de poluição multivariado ao longo do período analisado. Essa visualização permite verificar a coerência temporal do índice construído e sua capacidade de sintetizar a variabilidade conjunta dos poluentes considerados, sem introduzir instabilidades decorrentes do processo de agregação.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\columnwidth]{figures/eda_temporal_behavior_monthly.pdf}
-\caption{Série temporal mensal do índice composto de poluição.}
-\label{fig:eda_temporal_behavior}
-\end{figure}
-
-Para a formulação do problema de classificação, o índice contínuo foi discretizado em classes ordinais por meio de quantis empíricos:
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=\columnwidth]{figures/eda_temporal_behavior_monthly.pdf}
+% \caption{Série temporal mensal do índice composto de poluição.}
+% \label{fig:eda_temporal_behavior}
+% \end{figure}
+Para a formulação do problema de classificação, o índice contínuo foi discretizado em classes ordinais por meio de quantis empíricos, definidos a partir da distribuição do índice no conjunto de dados:
 \begin{equation}
 \text{Classe} =
 \begin{cases}
@@ -87,7 +105,8 @@ C_5, & \text{IP} > q_{0.90}
 \end{cases}
 \end{equation}
 
-A Tabela~\ref{tab:caracterizacao} apresenta a distribuição percentual das classes obtidas após a discretização do índice. A divisão balanceada decorre diretamente da definição dos quantis e estabelece um cenário experimental adequado para a avaliação comparativa de classificadores multiclasse.
+A Tabela~\ref{tab:caracterizacao} apresenta a distribuição percentual das classes resultantes do procedimento de discretização.
+
 
 \begin{table}[htb!]
   \centering
@@ -108,7 +127,7 @@ A Tabela~\ref{tab:caracterizacao} apresenta a distribuição percentual das clas
 
 \subsection{Modelos de Classificação}
 \label{subsec:modelos}
-A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos de classificação em identificar corretamente os níveis de poluição a partir das variáveis preditoras. Todos os modelos foram implementados em \textit{Python} utilizando a biblioteca \textit{scikit-learn}, responsável pela padronização das variáveis, codificação do alvo, validação cruzada, treinamento e avaliação de desempenho, garantindo um protocolo experimental reprodutível e comparável entre as abordagens consideradas \cite{scikit-learn}.
+A modelagem teve como objetivo avaliar a capacidade de diferentes algoritmos de classificação em identificar corretamente os níveis de poluição a partir das variáveis preditoras. Todos os modelos foram implementados em \textit{Python} utilizando a biblioteca \textit{scikit-learn}, responsável pela padronização das variáveis, codificação do alvo, validação cruzada, treinamento e avaliação de desempenho, garantindo um protocolo experimental reprodutível e comparável entre as abordagens consideradas \cite{scikit_learn}.
 
 \subsubsection{Modelos Lineares}
 \label{subsubsec:modelos_lineares}
